@@ -4,21 +4,20 @@ _Last updated: 2026-09-30_
 
 ## Current focus
 
-Planning is complete at the PRD level (v0.3). Phase 1 is complete. The
-build-time memory bank and Cursor rules are assistant context;
+Planning is complete at the PRD level (v0.3). Phases 1 and 2 are complete.
+The build-time memory bank and Cursor rules are assistant context;
 the portable product entry point is `AGENTS.md`, with product skills under
 `.agents/skills/`.
 
 ## Immediate next steps
 
-1. Build `vault/agents.md`, the schema documents, and the six templates for
-   Phase 2.
-2. Define the note types and tag vocabulary so Phase 3 validators have a
-   stable contract.
-3. Install the Obsidian-aware skills and enable the Obsidian CLI for local
-   interactive use if desired.
-4. Continue to keep `wiki_tool` filesystem-only; Obsidian setup is optional
-   local viewer configuration.
+1. Implement catalog, manifest, coverage, lint, query, apply, and audit in
+   `wiki_tool`.
+2. Add good and bad fixture vaults and tests for every validator.
+3. Keep generated catalog and manifest paths stable and excluded from note
+   validation.
+4. Add portable workflow skills under `.agents/skills/` after the tool
+   contracts are implemented.
 
 ## Open questions
 

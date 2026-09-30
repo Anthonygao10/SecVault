@@ -1,0 +1,28 @@
+---
+name: secvault-lint
+description: Validates SecVault note front matter, tags, naming, links, source citations, raw hashes, and secret-like values. Use after any vault change or when a schema or integrity problem is suspected.
+---
+
+# SecVault Lint
+
+Run the deterministic validator; do not replace it with prompt-based inspection.
+
+```powershell
+python -m wiki_tool lint --vault vault --json
+```
+
+## Interpreting failures
+
+- Missing or invalid front matter: compare the note with the matching
+  template and `vault/schema/front-matter.md`.
+- Unknown tag: use only `vault/schema/tags.yaml`.
+- Broken link: correct the Obsidian target or remove an unsupported link.
+- Missing source citation: add a resolvable `[[raw/sources/...]]` entry.
+- Raw hash mismatch or a missing manifest record: stop; do not modify the raw
+  evidence. Run `python -m wiki_tool manifest --vault vault` only when a new
+  capture is intentional and reviewed.
+- Secret-like value: redact through the approved capture process and review
+  the Git history; do not paste real credentials into a note.
+
+After fixing an allowed file, rerun lint and then the full maintain audit.
+Never weaken a validator to make a note pass.

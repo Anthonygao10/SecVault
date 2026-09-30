@@ -51,8 +51,8 @@ SECRET_PATTERNS = (
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b"),
     re.compile(
-        r"(?i)\b(?:api[_-]?key|access[_-]?token|auth[_-]?token|password|secret)"
-        r"\s*[:=]\s*['\"]?[A-Za-z0-9_./+=-]{16,}"
+        r"(?im)^\s*[A-Z0-9_]*(?:API[_-]?KEY|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|"
+        r"PASSWORD|SECRET)[A-Z0-9_]*\s*[:=]\s*['\"]?[A-Za-z0-9_./+=-]{16,}"
     ),
     re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]{20,}\b"),
 )
@@ -392,14 +392,13 @@ def update_manifest(vault: str | Path) -> dict[str, Any]:
     previous = _load_json(manifest_path, {"files": {}})
     previous_files = previous.get("files", {}) if isinstance(previous, dict) else {}
     files: dict[str, Any] = {}
+    cited_sources = _cited_raw_sources(root)
 
     for path in _iter_files(root / "raw"):
         relative = relative_path(root, path)
         if relative == "raw/manifest.json" or path.name == ".gitkeep":
             continue
-        processed = False
-        if path.suffix.lower() == ".md":
-            processed = bool(parse_markdown(path).metadata.get("processed", False))
+        processed = path.resolve() in cited_sources
         files[relative] = {
             "sha256": _sha256(path),
             "size": path.stat().st_size,
@@ -424,16 +423,26 @@ def update_manifest(vault: str | Path) -> dict[str, Any]:
     return manifest
 
 
-def find_uncovered_sources(vault: str | Path) -> list[str]:
-    """Return raw source paths not cited by an authoritative wiki note."""
-    root = vault_path(vault)
+def _cited_raw_sources(root: Path) -> set[Path]:
     cited: set[Path] = set()
     for path in _iter_files(root / "wiki", ".md"):
         note = parse_markdown(path)
         for target in _source_links(note.metadata):
             resolved = resolve_link(root, target)
             if resolved is not None:
-                cited.add(resolved)
+                try:
+                    if resolved.is_relative_to((root / "raw" / "sources").resolve()):
+                        cited.add(resolved)
+                except AttributeError:
+                    if str(resolved).startswith(str((root / "raw" / "sources").resolve())):
+                        cited.add(resolved)
+    return cited
+
+
+def find_uncovered_sources(vault: str | Path) -> list[str]:
+    """Return raw source paths not cited by an authoritative wiki note."""
+    root = vault_path(vault)
+    cited = _cited_raw_sources(root)
 
     uncovered = []
     for path in _iter_files(root / "raw" / "sources", ".md"):

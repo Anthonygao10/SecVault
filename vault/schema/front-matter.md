@@ -38,7 +38,9 @@ processed: false
 ```
 
 `finding_id` and `scanner` may be `null` for a manually captured incident
-source. `processed` is always a boolean.
+source. `processed` is always a boolean and records capture-time metadata.
+Because raw evidence is immutable, current coverage is recorded in
+`raw/manifest.json` rather than by editing this source note.
 
 ## Vulnerability fields
 

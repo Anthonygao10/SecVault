@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.Python
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Obsidian local state
+vault/.obsidian/workspace*.json
+vault/.obsidian/cache/
+vault/.obsidian/appearance.json
+vault/.obsidian/core-plugins.json
+
+# Generated local output
+*.log
+
+# Keep the repository's development context and rules versioned.

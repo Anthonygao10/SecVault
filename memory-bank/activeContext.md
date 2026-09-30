@@ -4,20 +4,22 @@ _Last updated: 2026-09-30_
 
 ## Current focus
 
-Planning is complete at the PRD level (v0.3). Phases 1 and 2 are complete.
+Planning is complete at the PRD level (v0.3). Phases 1, 2, and 3 are complete.
 The build-time memory bank and Cursor rules are assistant context;
 the portable product entry point is `AGENTS.md`, with product skills under
-`.agents/skills/`.
+`.agents/skills/`. Phase 4 is validating the end-to-end workflow against the
+intentionally vulnerable sample app.
 
 ## Immediate next steps
 
-1. Implement catalog, manifest, coverage, lint, query, apply, and audit in
-   `wiki_tool`.
-2. Add good and bad fixture vaults and tests for every validator.
-3. Keep generated catalog and manifest paths stable and excluded from note
-   validation.
-4. Add portable workflow skills under `.agents/skills/` after the tool
-   contracts are implemented.
+1. Build the intentionally vulnerable Python sample app and Terraform
+   configuration.
+2. Run or document Trivy, Checkov, and gitleaks scans with fake credentials
+   only.
+3. Capture redacted scan findings as raw sources, draft proposed notes, apply
+   an approved draft, and run the maintain/query/lint loop.
+4. Verify raw hash protection, body-text query behavior, and the human review
+   boundary.
 
 ## Open questions
 

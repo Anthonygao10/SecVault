@@ -53,9 +53,9 @@ The planned Obsidian skill pack includes CLI, Markdown, Bases, Canvas, and Defud
 
 ## Current technical state
 
-Phases 1 and 2 are complete. The repository uses Python 3.11+, a
+Phases 1, 2, and 3 are complete. The repository uses Python 3.11+, a
 standard-library `venv` managed with `pip`, PyYAML as the runtime dependency,
 pytest for tests, and Ruff for linting/formatting. The initial `wiki_tool`
-command surface is present as filesystem-only stubs. The vault schema,
-versioned tag vocabulary, workflows, and templates are now defined; Phase 3
-implements the command behavior and tests.
+command surface is implemented as filesystem-only operations. The vault
+schema, versioned tag vocabulary, workflows, templates, portable skills, and
+pytest fixtures are defined; Phase 4 validates the complete workflow.

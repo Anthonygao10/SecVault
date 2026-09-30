@@ -13,6 +13,7 @@
 ### Changelog
 
 - **v0.3:** Added threat model (section 9), repo layout and sample app (5.6), decision to make `wiki_tool` filesystem-only with Obsidian as an optional viewer, stable finding IDs and idempotent capture, `status_history` finding lifecycle, query spec, automated test requirement, scanner updates (Trivy, gitleaks), split of the review loop from Ollama in the milestones, resolved the open questions, and added tutorial-derived details (Web Clipper capture, Windows launchers, body-text search, PDF folder reserved).
+- **v0.3 implementation clarification:** Product workflow skills live in portable `.agents/skills/` and are entered through root `AGENTS.md`; tool-specific adapters such as `.cursor/rules/` and the development `memory-bank/` are build-time context, not product dependencies.
 - **v0.2:** Initial structured draft.
 
 ---

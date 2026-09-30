@@ -2,22 +2,22 @@
   "changed": [],
   "files": {
     "raw/sources/source-2026-09-30-checkov-config.md": {
-      "processed": false,
+      "processed": true,
       "sha256": "936e06332324507a3529297ec3dfc9f26a648bcff72e527d8f3fceb6e182ca20",
       "size": 2707
     },
     "raw/sources/source-2026-09-30-gitleaks-secrets.md": {
-      "processed": false,
+      "processed": true,
       "sha256": "9f89ba8fd79b1bc649bce6e5ded9683a592834e2a900b6009ac1679654277687",
       "size": 542
     },
     "raw/sources/source-2026-09-30-manual-code-review.md": {
-      "processed": false,
+      "processed": true,
       "sha256": "9473da9c54818f698adad6869c6bdddbc0805c18248f86f8122c5f23e45951a5",
       "size": 970
     },
     "raw/sources/source-2026-09-30-trivy-config.md": {
-      "processed": false,
+      "processed": true,
       "sha256": "dad8d862e243d0c05f25fe326232d9f08ff0a73d5f9484d62c108a31b8ca08fd",
       "size": 1275
     }

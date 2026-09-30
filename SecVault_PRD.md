@@ -13,7 +13,7 @@
 ### Changelog
 
 - **v0.3:** Added threat model (section 9), repo layout and sample app (5.6), decision to make `wiki_tool` filesystem-only with Obsidian as an optional viewer, stable finding IDs and idempotent capture, `status_history` finding lifecycle, query spec, automated test requirement, scanner updates (Trivy, gitleaks), split of the review loop from Ollama in the milestones, resolved the open questions, and added tutorial-derived details (Web Clipper capture, Windows launchers, body-text search, PDF folder reserved).
-- **v0.3 implementation clarification:** Product workflow skills live in portable `.agents/skills/` and are entered through root `AGENTS.md`; tool-specific adapters such as `.cursor/rules/` and the development `memory-bank/` are build-time context, not product dependencies.
+- **v0.3 implementation clarification:** Product workflow skills live in portable `.agents/skills/` and are entered through root `AGENTS.md`; tool-specific adapters such as `.cursor/rules/` and the development `memory-bank/` are build-time context, not product dependencies. Raw evidence remains immutable, so manifest `processed` state is derived from authoritative wiki citations rather than written back into raw notes.
 - **v0.2:** Initial structured draft.
 
 ---
@@ -151,7 +151,7 @@ Because Python scripts are not read by Obsidian, `wiki_tool/` lives outside `vau
 
 | Template | Purpose |
 |---|---|
-| **Source** | Raw scan report or incident. Includes a processed checkbox so ingestion coverage is trackable. |
+| **Source** | Raw scan report or incident. Includes capture-time processed metadata; because raw evidence is immutable, current ingestion coverage is authoritative in the raw source manifest. |
 | **Vulnerability** | Severity, CWE/OWASP category, affected component, status (open / fixed / accepted), append-only `status_history`, fix commit, links to concepts. |
 | **Bug postmortem** | Symptom, root cause, fix, prevention, related vulnerabilities. |
 | **Concept** | Reusable security ideas (e.g. input validation, secrets management) that many records link to. |

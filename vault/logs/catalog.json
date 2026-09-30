@@ -1,4 +1,348 @@
 {
-  "notes": [],
+  "notes": [
+    {
+      "body": "# Checkov Terraform scan: sample app\n\nCapture mode: normalized scanner output from Checkov 3.3.20. The report\ncontained no credential values.\n\n## Failed checks\n\n- `checkov:CKV_AWS_53:sample-app/main.tf:22-29` — S3 public ACL block is disabled.\n- `checkov:CKV_AWS_54:sample-app/main.tf:22-29` — S3 public policy block is disabled.\n- `checkov:CKV_AWS_55:sample-app/main.tf:22-29` — S3 public ACLs are not ignored.\n- `checkov:CKV_AWS_56:sample-app/main.tf:22-29` — public buckets are not restricted.\n- `checkov:CKV_AWS_70:sample-app/main.tf:31-44` — bucket policy allows any principal.\n- `checkov:CKV_AWS_62:sample-app/main.tf:46-57` — IAM policy grants full administrative actions.\n- `checkov:CKV_AWS_287:sample-app/main.tf:46-57` — IAM policy may expose credentials.\n- `checkov:CKV_AWS_288:sample-app/main.tf:46-57` — IAM policy permits data exfiltration.\n- `checkov:CKV_AWS_289:sample-app/main.tf:46-57` — IAM policy permits unconstrained exposure.\n- `checkov:CKV_AWS_286:sample-app/main.tf:46-57` — IAM policy permits privilege escalation.\n- `checkov:CKV_AWS_63:sample-app/main.tf:46-57` — IAM policy allows wildcard actions.\n- `checkov:CKV_AWS_355:sample-app/main.tf:46-57` — IAM policy allows wildcard resources.\n- `checkov:CKV_AWS_290:sample-app/main.tf:46-57` — IAM policy grants unconstrained write access.\n- `checkov:CKV_AWS_23:sample-app/main.tf:59-69` — security-group rule lacks a description.\n- `checkov:CKV_AWS_24:sample-app/main.tf:59-69` — unrestricted SSH ingress.\n- `checkov:CKV_AWS_25:sample-app/main.tf:59-69` — unrestricted RDP ingress.\n- `checkov:CKV_AWS_260:sample-app/main.tf:59-69` — unrestricted HTTP ingress.\n- `checkov:CKV2_AWS_62:sample-app/main.tf:18-20` — S3 notifications are missing.\n- `checkov:CKV_AWS_144:sample-app/main.tf:18-20` — S3 replication is missing.\n- `checkov:CKV2_AWS_61:sample-app/main.tf:18-20` — S3 lifecycle configuration is missing.\n- `checkov:CKV_AWS_18:sample-app/main.tf:18-20` — S3 access logging is missing.\n- `checkov:CKV2_AWS_5:sample-app/main.tf:59-69` — security group is unattached.\n- `checkov:CKV_AWS_21:sample-app/main.tf:18-20` — S3 versioning is missing.\n- `checkov:CKV2_AWS_6:sample-app/main.tf:18-20` — S3 public-access block is missing.\n- `checkov:CKV_AWS_145:sample-app/main.tf:18-20` — S3 KMS encryption is missing.\n- `checkov:CKV2_AWS_40:sample-app/main.tf:46-57` — IAM policy grants full IAM privileges.",
+      "front_matter": {
+        "captured": "2026-09-30",
+        "created": "2026-09-30",
+        "finding_id": "checkov:sample-app:terraform",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code",
+          "least-privilege"
+        ],
+        "title": "Checkov Terraform scan: sample app",
+        "type": "source",
+        "updated": "2026-09-30"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-09-30-checkov-config.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code",
+        "least-privilege"
+      ],
+      "title": "Checkov Terraform scan: sample app",
+      "type": "source"
+    },
+    {
+      "body": "# gitleaks secret scan: sample app\n\nCapture mode: normalized and redacted gitleaks output. The detected secret\nvalue is intentionally omitted from this raw record.\n\n## Findings\n\n- `gitleaks:generic-api-key:sample-app/app.py:15` — generic API key detected.\n  Secret value: `[REDACTED]`.",
+      "front_matter": {
+        "captured": "2026-09-30",
+        "created": "2026-09-30",
+        "finding_id": "gitleaks:sample-app:secrets",
+        "processed": false,
+        "scanner": "gitleaks",
+        "sources": [],
+        "tags": [
+          "source",
+          "secrets-management"
+        ],
+        "title": "gitleaks secret scan: sample app",
+        "type": "source",
+        "updated": "2026-09-30"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-09-30-gitleaks-secrets.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "secrets-management"
+      ],
+      "title": "gitleaks secret scan: sample app",
+      "type": "source"
+    },
+    {
+      "body": "# Manual code review: sample app\n\nThis source records the intentionally vulnerable code paths that configuration\nscanners do not cover:\n\n- `manual:CWE-89:sample-app/app.py:27` — SQL injection because the search term\n  is concatenated into a SQLite query.\n- `manual:CWE-79:sample-app/app.py:39` — reflected cross-site scripting because\n  the message is returned without output encoding.\n- `manual:CWE-20:sample-app/app.py:33` — weak input validation because the\n  search value has no meaningful length or character constraints.\n- `manual:CWE-798:sample-app/app.py:11-15` — fake credential-like values are\n  hardcoded in application source; the captured secret value is not repeated\n  here.",
+      "front_matter": {
+        "captured": "2026-09-30",
+        "created": "2026-09-30",
+        "finding_id": "manual:sample-app:code-review",
+        "processed": false,
+        "scanner": "manual",
+        "sources": [],
+        "tags": [
+          "source",
+          "input-validation",
+          "secrets-management"
+        ],
+        "title": "Manual code review: sample app",
+        "type": "source",
+        "updated": "2026-09-30"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-09-30-manual-code-review.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "input-validation",
+        "secrets-management"
+      ],
+      "title": "Manual code review: sample app",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy configuration scan: sample app\n\nCapture mode: normalized scanner output. The source was captured from\n`sample-app/main.tf`; no cloud resources were contacted.\n\n## Findings\n\n- `trivy:AWS-0086:sample-app/main.tf:25` — HIGH — S3 public ACL access block is disabled.\n- `trivy:AWS-0087:sample-app/main.tf:26` — HIGH — S3 public policy access block is disabled.\n- `trivy:AWS-0089:sample-app/main.tf:18` — LOW — S3 bucket logging is missing.\n- `trivy:AWS-0090:sample-app/main.tf:18` — MEDIUM — S3 bucket versioning is missing.\n- `trivy:AWS-0091:sample-app/main.tf:27` — HIGH — S3 public ACLs are not ignored.\n- `trivy:AWS-0093:sample-app/main.tf:28` — HIGH — public bucket access is not restricted.\n- `trivy:AWS-0107:sample-app/main.tf:67` — HIGH — security-group ingress is unrestricted.\n- `trivy:AWS-0124:sample-app/main.tf:63` — LOW — security-group rule description is missing.\n- `trivy:AWS-0132:sample-app/main.tf:18` — HIGH — S3 encryption does not use a customer-managed key.",
+      "front_matter": {
+        "captured": "2026-09-30",
+        "created": "2026-09-30",
+        "finding_id": "trivy:sample-app:config",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy configuration scan: sample app",
+        "type": "source",
+        "updated": "2026-09-30"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-09-30-trivy-config.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy configuration scan: sample app",
+      "type": "source"
+    },
+    {
+      "body": "# Input validation\n\nInput validation constrains untrusted values before they reach a query,\ninterpreter, renderer, or other security-sensitive operation. It complements\nparameterized queries and output encoding; it does not replace them.",
+      "front_matter": {
+        "created": "2026-09-30",
+        "sources": [
+          "[[raw/sources/source-2026-09-30-manual-code-review]]"
+        ],
+        "tags": [
+          "concept",
+          "input-validation"
+        ],
+        "title": "Input validation",
+        "type": "concept",
+        "updated": "2026-09-30"
+      },
+      "links": [
+        "raw/sources/source-2026-09-30-manual-code-review"
+      ],
+      "parse_error": null,
+      "path": "wiki/concepts/concept-input-validation.md",
+      "severity": null,
+      "sources": [
+        "[[raw/sources/source-2026-09-30-manual-code-review]]"
+      ],
+      "status": null,
+      "tags": [
+        "concept",
+        "input-validation"
+      ],
+      "title": "Input validation",
+      "type": "concept"
+    },
+    {
+      "body": "# Sample application\n\nThe intentionally insecure Python application is a scanner fixture for\nSecVault. It contains code and infrastructure findings that exercise the\ningest, source-citation, query, and review workflows.",
+      "front_matter": {
+        "created": "2026-09-30",
+        "sources": [
+          "[[raw/sources/source-2026-09-30-manual-code-review]]"
+        ],
+        "tags": [
+          "entity"
+        ],
+        "title": "Sample application",
+        "type": "entity",
+        "updated": "2026-09-30"
+      },
+      "links": [
+        "raw/sources/source-2026-09-30-manual-code-review"
+      ],
+      "parse_error": null,
+      "path": "wiki/entities/entity-sample-app.md",
+      "severity": null,
+      "sources": [
+        "[[raw/sources/source-2026-09-30-manual-code-review]]"
+      ],
+      "status": null,
+      "tags": [
+        "entity"
+      ],
+      "title": "Sample application",
+      "type": "entity"
+    },
+    {
+      "body": "# Hardcoded API key in sample application\n\nThe source file contains a credential-like API key. The captured value is\nredacted and must not be copied into the wiki or sent to a hosted model.\n\n## Remediation\n\nRemove the value from source control, rotate it if it were real, and load\nsecrets through a managed secret store or local environment configuration that\nis excluded from Git.",
+      "front_matter": {
+        "component": "sample-app/app.py",
+        "created": "2026-09-30",
+        "cwe": "CWE-798",
+        "finding_id": "gitleaks:generic-api-key:sample-app/app.py:15",
+        "fix_commit": null,
+        "owasp": "A07:2021-Identification-and-Authentication-Failures",
+        "severity": "high",
+        "sources": [
+          "[[raw/sources/source-2026-09-30-gitleaks-secrets]]",
+          "[[raw/sources/source-2026-09-30-manual-code-review]]"
+        ],
+        "status": "open",
+        "status_history": [
+          {
+            "date": "2026-09-30",
+            "note": "Secret value was redacted in the captured source.",
+            "ref": "gitleaks:generic-api-key:sample-app/app.py:15",
+            "status": "open"
+          }
+        ],
+        "tags": [
+          "vulnerability",
+          "cwe-798-hardcoded-credentials",
+          "secrets-management"
+        ],
+        "title": "Hardcoded API key in sample application",
+        "type": "vulnerability",
+        "updated": "2026-09-30"
+      },
+      "links": [
+        "raw/sources/source-2026-09-30-gitleaks-secrets",
+        "raw/sources/source-2026-09-30-manual-code-review"
+      ],
+      "parse_error": null,
+      "path": "wiki/vulnerabilities/vuln-hardcoded-api-key.md",
+      "severity": "high",
+      "sources": [
+        "[[raw/sources/source-2026-09-30-gitleaks-secrets]]",
+        "[[raw/sources/source-2026-09-30-manual-code-review]]"
+      ],
+      "status": "open",
+      "tags": [
+        "vulnerability",
+        "cwe-798-hardcoded-credentials",
+        "secrets-management"
+      ],
+      "title": "Hardcoded API key in sample application",
+      "type": "vulnerability"
+    },
+    {
+      "body": "# Public S3 bucket and unrestricted ingress\n\nThe Terraform fixture disables S3 public-access protections, grants public\nobject reads, and permits broad inbound network access. Together these\nsettings expose data and expand the reachable attack surface.\n\n## Remediation\n\nEnable every S3 public-access block, remove wildcard principals, restrict\nsecurity-group ingress to required CIDRs and ports, and enforce these controls\nwith infrastructure-as-code checks.",
+      "front_matter": {
+        "component": "sample-app/main.tf",
+        "created": "2026-09-30",
+        "cwe": "CWE-284",
+        "finding_id": "trivy:AWS-0086:sample-app/main.tf:25",
+        "fix_commit": null,
+        "owasp": "A05:2021-Security-Misconfiguration",
+        "severity": "high",
+        "sources": [
+          "[[raw/sources/source-2026-09-30-trivy-config]]",
+          "[[raw/sources/source-2026-09-30-checkov-config]]"
+        ],
+        "status": "open",
+        "status_history": [
+          {
+            "date": "2026-09-30",
+            "note": "First recorded from Trivy and Checkov configuration scans.",
+            "ref": "trivy:AWS-0086:sample-app/main.tf:25",
+            "status": "open"
+          }
+        ],
+        "tags": [
+          "vulnerability",
+          "owasp-a05-security-misconfiguration",
+          "least-privilege",
+          "infrastructure-as-code"
+        ],
+        "title": "Public S3 bucket and unrestricted ingress",
+        "type": "vulnerability",
+        "updated": "2026-09-30"
+      },
+      "links": [
+        "raw/sources/source-2026-09-30-checkov-config",
+        "raw/sources/source-2026-09-30-trivy-config"
+      ],
+      "parse_error": null,
+      "path": "wiki/vulnerabilities/vuln-public-s3-bucket.md",
+      "severity": "high",
+      "sources": [
+        "[[raw/sources/source-2026-09-30-trivy-config]]",
+        "[[raw/sources/source-2026-09-30-checkov-config]]"
+      ],
+      "status": "open",
+      "tags": [
+        "vulnerability",
+        "owasp-a05-security-misconfiguration",
+        "least-privilege",
+        "infrastructure-as-code"
+      ],
+      "title": "Public S3 bucket and unrestricted ingress",
+      "type": "vulnerability"
+    },
+    {
+      "body": "# SQL injection in search endpoint\n\nThe `/search` endpoint concatenates the untrusted `q` parameter into a\ndatabase query. An attacker can alter the query structure and read or modify\ndata available to the process.\n\n## Remediation\n\nUse parameterized queries, validate the input at the application boundary, and\nadd a regression test for injection payloads.",
+      "front_matter": {
+        "component": "sample-app/app.py",
+        "created": "2026-09-30",
+        "cwe": "CWE-89",
+        "finding_id": "manual:CWE-89:sample-app/app.py:27",
+        "fix_commit": null,
+        "owasp": "A03:2021-Injection",
+        "severity": "high",
+        "sources": [
+          "[[raw/sources/source-2026-09-30-manual-code-review]]"
+        ],
+        "status": "open",
+        "status_history": [
+          {
+            "date": "2026-09-30",
+            "note": "First recorded from the manual code-review capture.",
+            "ref": "manual:CWE-89:sample-app/app.py:27",
+            "status": "open"
+          }
+        ],
+        "tags": [
+          "vulnerability",
+          "cwe-89-sql-injection",
+          "owasp-a03-injection",
+          "input-validation"
+        ],
+        "title": "SQL injection in search endpoint",
+        "type": "vulnerability",
+        "updated": "2026-09-30"
+      },
+      "links": [
+        "raw/sources/source-2026-09-30-manual-code-review"
+      ],
+      "parse_error": null,
+      "path": "wiki/vulnerabilities/vuln-sql-injection-search.md",
+      "severity": "high",
+      "sources": [
+        "[[raw/sources/source-2026-09-30-manual-code-review]]"
+      ],
+      "status": "open",
+      "tags": [
+        "vulnerability",
+        "cwe-89-sql-injection",
+        "owasp-a03-injection",
+        "input-validation"
+      ],
+      "title": "SQL injection in search endpoint",
+      "type": "vulnerability"
+    }
+  ],
   "version": 1
 }

@@ -30,5 +30,6 @@ vault/.obsidian/core-plugins.json
 
 # Generated local output
 *.log
+.tools/
 
 # Keep the repository's development context and rules versioned.

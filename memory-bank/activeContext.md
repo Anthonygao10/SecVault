@@ -4,18 +4,21 @@ _Last updated: 2026-09-30_
 
 ## Current focus
 
-Planning is complete at the PRD level (v0.3). Phase 1 implementation is in
-progress. The build-time memory bank and Cursor rules are assistant context;
+Planning is complete at the PRD level (v0.3). Phase 1 is complete. The
+build-time memory bank and Cursor rules are assistant context;
 the portable product entry point is `AGENTS.md`, with product skills under
 `.agents/skills/`.
 
 ## Immediate next steps
 
-1. Verify the Phase 1 skeleton, CLI help, and Ruff checks.
-2. Initialize Git with the `.gitignore` covering local configuration, Obsidian workspace files, and Python artifacts; commit the initial foundation.
-3. Install the Python development dependencies in a local `.venv` and record the verification.
-4. Install the Obsidian-aware skills and enable the Obsidian CLI for local interactive use.
-5. Build Phase 2: `agents.md`, the front matter schema, `schema/tags.yaml`, naming conventions, workflows, the lint checklist, and the six templates.
+1. Build `vault/agents.md`, the schema documents, and the six templates for
+   Phase 2.
+2. Define the note types and tag vocabulary so Phase 3 validators have a
+   stable contract.
+3. Install the Obsidian-aware skills and enable the Obsidian CLI for local
+   interactive use if desired.
+4. Continue to keep `wiki_tool` filesystem-only; Obsidian setup is optional
+   local viewer configuration.
 
 ## Open questions
 

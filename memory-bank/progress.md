@@ -4,7 +4,7 @@ _Last updated: 2026-09-30_
 
 ## Overall status
 
-The PRD is drafted (v0.3). Phase 1 foundation scaffolding is in progress.
+The PRD is drafted (v0.3). Phase 1 foundation is complete; Phase 2 is next.
 
 ## Completed
 
@@ -14,7 +14,7 @@ The PRD is drafted (v0.3). Phase 1 foundation scaffolding is in progress.
 
 ## Phase checklist
 
-- [ ] **Phase 1: Foundation** — repository skeleton, portable `AGENTS.md`, Python package/CLI surface, `.gitignore`, and development-tool decisions are scaffolded; Git/dependency verification and the initial commit remain
+- [x] **Phase 1: Foundation** — repository skeleton, portable `AGENTS.md`, Python package/CLI surface, `.gitignore`, development-tool decisions, local environment, validation, and initial commit
 - [ ] **Phase 2: Schema & Templates** — create the folder structure, README, `agents.md`, front matter schema, naming rules, `tags.yaml`, workflows, lint checklist, and six templates
 - [ ] **Phase 3: Tooling & Skills** — build `wiki_tool` (catalog with body text, manifest hashes, coverage, validation, query, and audit), pytest fixtures, and ingest/maintain/query/lint skills
 - [ ] **Phase 4: Manual Validation** — create `sample-app/`, run Trivy/Checkov/gitleaks, hand-ingest findings, run maintain, verify queries, and test each stage separately

@@ -1,0 +1,42 @@
+version: 1
+
+# The linter flattens every value in this mapping into the allowed vocabulary.
+# Additions are schema changes and should be reviewed.
+tags:
+  type:
+    - source
+    - vulnerability
+    - postmortem
+    - concept
+    - entity
+    - log
+  severity:
+    - severity-critical
+    - severity-high
+    - severity-medium
+    - severity-low
+    - severity-informational
+  status:
+    - status-open
+    - status-fixed
+    - status-accepted
+  cwe:
+    - cwe-22-path-traversal
+    - cwe-78-command-injection
+    - cwe-79-cross-site-scripting
+    - cwe-89-sql-injection
+    - cwe-798-hardcoded-credentials
+    - cwe-918-server-side-request-forgery
+  owasp:
+    - owasp-a01-broken-access-control
+    - owasp-a03-injection
+    - owasp-a05-security-misconfiguration
+    - owasp-a07-identification-authentication-failures
+    - owasp-a10-ssrf
+  domain:
+    - ci-cd
+    - input-validation
+    - least-privilege
+    - secrets-management
+    - infrastructure-as-code
+    - dependency-management

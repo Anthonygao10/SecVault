@@ -4,8 +4,21 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections.abc import Sequence
 from pathlib import Path
+
+from .operations import (
+    DraftApplyError,
+    VaultError,
+    apply_draft,
+    audit_vault,
+    build_catalog,
+    find_uncovered_sources,
+    lint_vault,
+    query_catalog,
+    update_manifest,
+)
 
 COMMANDS = {
     "index": "Build the note catalog.",
@@ -19,7 +32,7 @@ COMMANDS = {
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Build the Phase 1 command surface without performing file operations."""
+    """Build the command-line interface."""
     parser = argparse.ArgumentParser(
         prog="wiki-tool",
         description="Deterministic filesystem tooling for the SecVault vault.",
@@ -42,6 +55,9 @@ def build_parser() -> argparse.ArgumentParser:
 
         if name == "query":
             command_parser.add_argument("terms", nargs="+", help="Terms to search for.")
+            command_parser.add_argument("--type", dest="note_type", help="Filter by note type.")
+            command_parser.add_argument("--tag", help="Filter by exact tag.")
+            command_parser.add_argument("--limit", type=int, default=10)
         elif name == "apply":
             command_parser.add_argument("draft", type=Path, help="Draft file to apply.")
             command_parser.add_argument(
@@ -53,23 +69,32 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _stub_result(args: argparse.Namespace) -> dict[str, object]:
-    """Return a stable placeholder until the Phase 3 implementations exist."""
-    result: dict[str, object] = {
-        "command": args.command,
-        "status": "not_implemented",
-        "vault": str(args.vault),
-    }
-    if hasattr(args, "terms"):
-        result["terms"] = args.terms
-    if hasattr(args, "draft"):
-        result["draft"] = str(args.draft)
-        result["overwrite"] = args.overwrite
-    return result
+def _text_result(command: str, result: object) -> None:
+    if command == "lint" and isinstance(result, dict):
+        if result.get("ok"):
+            print(f"PASS: checked {result.get('checked_notes', 0)} notes")
+        else:
+            print("FAIL: vault lint found errors")
+            for error in result.get("errors", []):
+                print(f"- {error}")
+        return
+    if command == "query" and isinstance(result, list):
+        for item in result:
+            print(f"{item['score']:>3}  {item['path']}  {item['title']}")
+        if not result:
+            print("No matching notes.")
+        return
+    if command == "coverage" and isinstance(result, list):
+        if result:
+            print("\n".join(result))
+        else:
+            print("All raw sources have wiki coverage.")
+        return
+    print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Parse a command and expose the complete Phase 1 command surface."""
+    """Parse arguments, execute one deterministic operation, and report its result."""
     parser = build_parser()
     args = parser.parse_args(argv)
 
@@ -77,9 +102,38 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.print_help()
         return 0
 
-    result = _stub_result(args)
+    try:
+        if args.command == "index":
+            result = build_catalog(args.vault)
+        elif args.command == "manifest":
+            result = update_manifest(args.vault)
+        elif args.command == "coverage":
+            result = find_uncovered_sources(args.vault)
+        elif args.command == "lint":
+            result = lint_vault(args.vault).as_dict()
+        elif args.command == "query":
+            result = query_catalog(
+                args.vault,
+                args.terms,
+                note_type=args.note_type,
+                tag=args.tag,
+                limit=args.limit,
+            )
+        elif args.command == "apply":
+            result = apply_draft(args.vault, args.draft, overwrite=args.overwrite)
+        else:
+            result = audit_vault(args.vault)
+    except (VaultError, DraftApplyError) as exc:
+        print(f"wiki-tool: {exc}", file=sys.stderr)
+        return 2
+
     if args.json:
-        print(json.dumps(result, indent=2))
+        print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
     else:
-        print(f"wiki-tool: {args.command} is not implemented yet (scheduled for Phase 3).")
+        _text_result(args.command, result)
+
+    if args.command == "lint" and isinstance(result, dict) and not result.get("ok"):
+        return 1
+    if args.command == "audit" and isinstance(result, dict) and result.get("status") != "passed":
+        return 1
     return 0

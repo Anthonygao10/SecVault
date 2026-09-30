@@ -4,28 +4,23 @@ _Last updated: 2026-09-30_
 
 ## Current focus
 
-Planning is complete at the PRD level (v0.3). Phases 1, 2, and 3 are complete.
+Planning is complete at the PRD level (v0.3). Phases 1 through 4 are complete.
 The build-time memory bank and Cursor rules are assistant context;
 the portable product entry point is `AGENTS.md`, with product skills under
-`.agents/skills/`. Phase 4 is validating the end-to-end workflow against the
-intentionally vulnerable sample app.
+`.agents/skills/`. The next work is Phase 5: CI automation.
 
 ## Immediate next steps
 
-1. Build the intentionally vulnerable Python sample app and Terraform
-   configuration.
-2. Run or document Trivy, Checkov, and gitleaks scans with fake credentials
-   only.
-3. Capture redacted scan findings as raw sources, draft proposed notes, apply
-   an approved draft, and run the maintain/query/lint loop.
-4. Verify raw hash protection, body-text query behavior, and the human review
-   boundary.
+1. Add GitHub Actions workflows for scanner capture, redaction, lint, tests,
+   and scheduled deterministic maintenance.
+2. Define and test stable finding IDs and idempotent raw capture.
+3. Keep hosted CI free of LLM drafting; drafting remains local and reviewed.
+4. Preserve the Phase 4 demo as the regression narrative for later phases.
 
 ## Open questions
 
 These remain open in PRD section 12:
 
-- Which coding agent(s) should be used for the primary demo and for testing agent-agnosticism?
 - Which Ollama model gives acceptable drafts on the available hardware?
 - What stable-ID scheme should be used when code moves between lines or files?
 - Should scheduled maintenance auto-open a PR or only report?
@@ -57,3 +52,13 @@ These remain open in PRD section 12:
 - Keep `memory-bank/` and `.cursor/rules/` as build-time context rather than
   product dependencies.
 - Use Python 3.11+, `venv` + `pip`, PyYAML, pytest, and Ruff.
+
+## Decisions made during Phases 2-4
+
+- Use root `AGENTS.md` as the cross-agent product entry point and
+  `.agents/skills/` as the portable skill source of truth.
+- Keep raw source notes immutable; derive manifest `processed` state from
+  authoritative wiki citations.
+- Use Trivy 0.74.0, Checkov 3.3.20, and gitleaks 8.30.1 for the local demo.
+- Require explicit human approval before applying generated drafts; all five
+  Phase 4 drafts were approved before entering `wiki/`.

@@ -4,8 +4,7 @@ _Last updated: 2026-09-30_
 
 ## Overall status
 
-The PRD is drafted (v0.3). Phases 1, 2, and 3 are complete; Phase 4 is in
-progress.
+The PRD is drafted (v0.3). Phases 1 through 4 are complete; Phase 5 is next.
 
 ## Completed
 
@@ -18,7 +17,7 @@ progress.
 - [x] **Phase 1: Foundation** — repository skeleton, portable `AGENTS.md`, Python package/CLI surface, `.gitignore`, development-tool decisions, local environment, validation, and initial commit
 - [x] **Phase 2: Schema & Templates** — create the folder structure, README, `agents.md`, front matter schema, naming rules, `tags.yaml`, workflows, lint checklist, and six templates
 - [x] **Phase 3: Tooling & Skills** — build `wiki_tool` (catalog with body text, manifest hashes, coverage, validation, query, and audit), pytest fixtures, and ingest/maintain/query/lint skills
-- [ ] **Phase 4: Manual Validation** — create `sample-app/`, run Trivy/Checkov/gitleaks, hand-ingest findings, run maintain, verify queries, and test each stage separately
+- [x] **Phase 4: Manual Validation** — create `sample-app/`, run Trivy/Checkov/gitleaks, hand-ingest findings, run maintain, verify queries, and test each stage separately
 - [ ] **Phase 5: CI Automation** — add scanning, stable-ID redacted idempotent capture, required lint/test checks, and scheduled maintenance
 - [ ] **Phase 6: Review Loop** — implement draft -> proposed -> approve -> apply and add a prompt-injection fixture
 - [ ] **Phase 7: Local Model, Launchers & Firewall** — integrate Ollama, add Windows launchers, and build/test the Obsidian-safe wrapper

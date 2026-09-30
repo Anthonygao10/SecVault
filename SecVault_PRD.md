@@ -338,10 +338,11 @@ Out of scope for v1: hard isolation against a determined malicious agent (sandbo
 - **Finding lifecycle:** append-only `status_history`; "fixed" confirmed by a human.
 - **Firewall:** wrapper plus documented limitations is sufficient for the demo.
 - **Obsidian dependency:** optional viewer only; tooling and CI are filesystem-based.
+- **Build agents:** Claude Sonnet 5.5 High plans and GPT Luna 5.6/6 implements
+  in Cursor; the product remains agent-agnostic.
 
 ### Still open
 
-- Which coding agent(s) to use for the primary demo and for testing agent-agnosticism.
 - Which Ollama model gives acceptable drafts on the available hardware.
 - Exact stable-ID scheme for findings when code moves between lines or files.
 - Whether the maintain loop should auto-open a PR for scheduled changes or only report them.

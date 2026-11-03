@@ -1,0 +1,139 @@
+name: Scan and capture
+
+# Turns scanner findings into raw evidence. Pull requests get a dry run in a
+# throwaway copy of the vault (uploaded as an artifact, nothing is committed).
+# Only main writes to the vault, and it commits raw evidence only.
+# wiki/ is never touched here: agent drafts still go through proposed/ review.
+on:
+  pull_request:
+    paths:
+      - "sample-app/**"
+      - "wiki_tool/**"
+      - ".github/actions/run-scanners/**"
+      - ".github/workflows/scan-capture.yml"
+  push:
+    branches: [main]
+    paths:
+      - "sample-app/**"
+      - "wiki_tool/**"
+      - ".github/actions/run-scanners/**"
+      - ".github/workflows/scan-capture.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    name: Capture preview
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install SecVault
+        run: python -m pip install -e .
+
+      - name: Run scanners
+        uses: ./.github/actions/run-scanners
+
+      - name: Capture into a throwaway copy of the vault
+        run: |
+          set -euo pipefail
+          preview="$RUNNER_TEMP/preview"
+          rm -rf "$preview"
+          mkdir -p "$preview"
+          cp -R vault "$preview/vault"
+          report="$preview/capture.txt"
+          : > "$report"
+          for scanner in trivy checkov gitleaks; do
+            python -m wiki_tool capture --vault "$preview/vault" --scanner "$scanner" \
+              --input "$RUNNER_TEMP/scan/$scanner.json" --path-prefix sample-app \
+              --revision "${GITHUB_SHA:0:12}" | tee -a "$report"
+          done
+          {
+            echo "### Scanner capture preview (dry run, nothing committed)"
+            echo
+            echo '```text'
+            cat "$report"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload preview artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capture-preview
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/preview/vault/raw/sources
+            ${{ runner.temp }}/preview/vault/logs/capture-state.json
+            ${{ runner.temp }}/preview/capture.txt
+
+      - name: Remove raw scanner output
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/scan"
+
+  capture:
+    name: Capture to main
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    # Runs queue rather than cancel, so two captures never race on the same commit.
+    concurrency:
+      group: secvault-capture
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install SecVault
+        run: python -m pip install -e .
+
+      - name: Run scanners
+        uses: ./.github/actions/run-scanners
+
+      - name: Capture findings into the vault
+        run: |
+          set -euo pipefail
+          for scanner in trivy checkov gitleaks; do
+            python -m wiki_tool capture --vault vault --scanner "$scanner" \
+              --input "$RUNNER_TEMP/scan/$scanner.json" --path-prefix sample-app \
+              --revision "${GITHUB_SHA:0:12}"
+          done
+
+      - name: Commit new raw evidence to main
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C main
+          git add vault/raw vault/logs
+          if git diff --cached --quiet; then
+            echo "No new raw evidence to commit."
+            exit 0
+          fi
+          git commit -m "chore: capture scanner findings as raw evidence (${GITHUB_SHA:0:7})"
+          # If the rebase conflicts, the run fails before pushing. Nothing is lost:
+          # the next run recomputes the same findings from the new main.
+          git pull --rebase origin main
+          git push origin main
+
+      - name: Remove raw scanner output
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/scan"

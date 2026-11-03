@@ -1,0 +1,33 @@
+name: Maintenance report
+
+# Weekly, read-only health check. It publishes the report to the job summary and
+# fails if integrity checks fail. It never runs `manifest`, never changes raw
+# evidence, and never commits.
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install SecVault
+        run: python -m pip install -e .
+
+      - name: Publish maintenance report
+        run: |
+          set -euo pipefail
+          python -m wiki_tool report | tee -a "$GITHUB_STEP_SUMMARY"

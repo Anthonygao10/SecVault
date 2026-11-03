@@ -338,7 +338,7 @@ Out of scope for v1: hard isolation against a determined malicious agent (sandbo
 - **Finding lifecycle:** append-only `status_history`; "fixed" confirmed by a human.
 - **Firewall:** wrapper plus documented limitations is sufficient for the demo.
 - **Obsidian dependency:** optional viewer only; tooling and CI are filesystem-based.
-- **Build agents:** Claude Sonnet 5.5 High plans and GPT Luna 5.6/6 implements
+- **Build agents:** Claude Sonnet 5.5 High plans and Claude Haiku 5.5 (max) implements
   in Cursor; the product remains agent-agnostic.
 
 ### Still open

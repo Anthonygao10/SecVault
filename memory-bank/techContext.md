@@ -10,7 +10,7 @@
 | Tooling | Python 3.11+ (`wiki_tool`) with `venv` + `pip`, PyYAML, pytest, and Ruff |
 | Coding agent | Any agentic coding tool; agent-agnostic by design |
 | Local model | Ollama; model selection is still open |
-| CI/CD | GitHub Actions for scanning, capture, lint/test gates, and scheduled maintenance |
+| CI/CD | GitHub Actions: required `ci` check (Ruff, pytest, vault lint); scan and capture (dry run on PRs, commits to `main`); weekly report-only maintenance |
 | Security scanning | Trivy, Checkov, gitleaks, project linters, and project tests |
 | Packaging | Docker image for tooling and scripts |
 | Access control | Obsidian-safe wrapper script and skill with a vault allowlist |
@@ -53,12 +53,12 @@ The planned Obsidian skill pack includes CLI, Markdown, Bases, Canvas, and Defud
 
 ## Current technical state
 
-Phases 1 through 4 are complete. The repository uses Python 3.11+, a
+Phases 1 through 5 are complete. The repository uses Python 3.11+, a
 standard-library `venv` managed with `pip`, PyYAML as the runtime dependency,
 pytest for tests, and Ruff for linting/formatting. The initial `wiki_tool`
 command surface is implemented as filesystem-only operations. The vault
 schema, versioned tag vocabulary, workflows, templates, portable skills, and
-pytest fixtures are defined; Phase 4 validates the complete workflow.
+pytest fixtures are defined; Phase 4 validates the manual workflow, and Phase 5 automates capture and checks in CI with pinned, SHA-256-verified scanner archives.
 The demo uses Trivy 0.74.0, Checkov 3.3.20, and gitleaks 8.30.1. Scanner
 binaries are local ignored tools; their redacted findings are captured under
 `vault/raw/sources/`.

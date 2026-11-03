@@ -18,9 +18,12 @@ python -m wiki_tool lint --vault vault --json
 - Unknown tag: use only `vault/schema/tags.yaml`.
 - Broken link: correct the Obsidian target or remove an unsupported link.
 - Missing source citation: add a resolvable `[[raw/sources/...]]` entry.
-- Raw hash mismatch or a missing manifest record: stop; do not modify the raw
-  evidence. Run `python -m wiki_tool manifest --vault vault` only when a new
-  capture is intentional and reviewed.
+- Raw hash mismatch (a changed or removed raw file): stop; do not edit the raw
+  evidence. Restore the file from Git history after confirming the change was
+  not intentional. `manifest` does not accept a changed file, so re-running it
+  does not clear the failure.
+- Missing manifest record for a new raw file: run `python -m wiki_tool manifest
+  --vault vault` only when the capture is intentional and reviewed.
 - Secret-like value: redact through the approved capture process and review
   the Git history; do not paste real credentials into a note.
 

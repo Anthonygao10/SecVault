@@ -30,7 +30,7 @@ tags:
 created: 2026-09-30
 updated: 2026-09-30
 sources: []
-finding_id: "trivy:rule:file:location"
+finding_id: "101aad4318ba"
 scanner: trivy
 captured: 2026-09-30
 processed: false
@@ -39,6 +39,12 @@ processed: false
 
 `finding_id` and `scanner` may be `null` for a manually captured incident
 source. `processed` is always a boolean and records capture-time metadata.
+
+For scanner findings, `finding_id` is a 12-character lowercase hex ID written by
+`wiki_tool capture`: the first 12 characters of the SHA-256 of
+`scanner|rule_id|normalized_path|resource_or_secret_hash`. Line numbers are
+excluded, so a finding that moves within a file keeps its ID. For gitleaks, the
+hash covers the secret value, which is never stored.
 Because raw evidence is immutable, current coverage is recorded in
 `raw/manifest.json` rather than by editing this source note.
 
@@ -57,7 +63,7 @@ status_history:
     date: 2026-09-30
     ref: "capture"
     note: "First recorded."
-finding_id: "stable-finding-id"
+finding_id: "101aad4318ba"
 fix_commit: null
 ```
 

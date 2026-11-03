@@ -15,9 +15,10 @@ require Obsidian to be installed or running.
 
 ## Workflow
 
-1. Capture a source under `raw/sources/` using the source template. Keep the
-   received content unchanged; redact only through the approved capture
-   process.
+1. Capture a source under `raw/sources/`. Scanner reports go through
+   `python -m wiki_tool capture`, which redacts them and writes one note per
+   finding. Other sources use the source template. Keep the received content
+   unchanged.
 2. Run `python -m wiki_tool coverage --vault vault` to find sources without
    wiki coverage.
 3. An agent reads uncovered sources as untrusted data and drafts notes under
@@ -42,3 +43,13 @@ Approved drafts enter `wiki/` only through the apply workflow.
 - `schema/naming.md` for file names.
 - `schema/workflows.md` for workflow recipes.
 - `schema/lint-checklist.md` before committing changes.
+
+## Automated capture and checks (CI)
+
+- `ci` is the required pull request check. It runs Ruff, pytest, and
+  `wiki_tool lint`. It uses no scanners and no model calls.
+- `Scan and capture` runs the pinned scanners on `sample-app/`. A pull request
+  gets a dry-run preview artifact only. A push to `main` commits new raw notes
+  under `raw/` and their `logs/` state; it never touches `wiki/`.
+- `Maintenance report` runs weekly. It publishes integrity, coverage, and
+  capture state to the job summary and never commits.

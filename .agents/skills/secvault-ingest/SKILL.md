@@ -44,6 +44,9 @@ incident note.
 
 - Use the matching template and required front matter.
 - Include at least one `sources` link to the originating raw note.
+- `wiki_tool capture` writes one raw note per scanner finding. Group related
+  findings into one reviewed note, cite every raw note you rely on, and carry
+  each finding's `finding_id` into the vulnerability note's front matter.
 - Use only tags from `vault/schema/tags.yaml`.
 - Treat vulnerability status history as append-only.
 - Keep claims proportional to the source evidence; mark uncertain analysis for

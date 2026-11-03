@@ -30,9 +30,9 @@ Note: `memory-bank/` (this folder) is project-development context for the AI ass
 - **Deterministic vs LLM split:** Python does indexing, validation, querying; the LLM only extracts and drafts.
 - **Schema enforced by code:** unknown tags fail lint; `schema/tags.yaml` is versioned and changes are deliberate.
 - **`wiki_tool` is filesystem-only.** Obsidian is an optional viewer; CI and tooling never require it. Obsidian CLI is for interactive local sessions only, never CI/Docker.
-- **CI vs local split:** CI runs scans, raw writes, catalog/index, lint, tests, scheduled maintenance. LLM drafting runs locally (cloud agent or Ollama) because hosted runners have no GPU. Self-hosted runner is a later option.
+- **CI vs local split:** CI runs scans, raw capture (on `main` only), catalog/index, lint, tests, and report-only scheduled maintenance. LLM drafting runs locally (cloud agent or Ollama) because hosted runners have no GPU. Self-hosted runner is a later option.
 - **Human-in-the-loop:** drafts go to `proposed/`, never directly to wiki. Apply step refuses to overwrite existing notes without explicit confirmation. Review loop is model-agnostic and built before Ollama.
-- **Stable finding IDs + idempotent capture:** hash of scanner, rule ID, file path, normalized location. Re-scans update "last seen" in manifest; no duplicates.
+- **Stable finding IDs + idempotent capture:** `sha256(scanner|rule_id|normalized_path|resource_or_secret_hash)[:12]`, with no line numbers. One raw note per finding. Re-scans skip known IDs and update `logs/capture-state.json`; a finding that disappears becomes `candidate_fixed`, and a human confirms it.
 - **Retrieval:** catalog/index-first, not vector RAG.
 - **Monorepo for v1:** avoids cross-repo CI token issues.
 
@@ -40,7 +40,12 @@ Note: `memory-bank/` (this folder) is project-development context for the AI ass
 Keyword + tag matching over titles, front matter, and body text (body text is required; the tutorial's first pass failed without it). Weighted score: title > tags/front matter > body. Top N, JSON output: path, title, type, severity/status, source citation, snippet. Maintain loop runs a fixed set of known queries as regression checks.
 
 ## `wiki_tool` responsibilities
-Index/catalog (incl. body text); raw manifest with content hashes; coverage check; structural validation (front matter, allowed tags, link integrity, naming, source citation, raw-file hash integrity, secret-like strings); query; audit + log entries; redaction of secrets in capture.
+Index/catalog (incl. body text); raw manifest with content hashes; coverage check; structural validation (front matter, allowed tags, link integrity, naming, source citation, raw-file hash integrity, secret-like strings); query; audit + log entries; capture (redaction, stable IDs, idempotent raw writes, finding state); read-only report.
+
+## Capture safety (Phase 5)
+- Fail closed: the vault must lint cleanly before capture, and a secret-like value that survives redaction stops the run before any write.
+- Write order: new raw notes (exclusive create, never overwrite), then capture state, then manifest, catalog, and log, then lint.
+- Raw notes are never rewritten. `logs/capture-state.json` records first and last seen dates and each finding's `open` or `candidate_fixed` status.
 
 ## Vault firewall
 Wrapper script in front of the Obsidian CLI checks vault name against an allowlist; `obsidian-safe` skill routes actions through it. It is a guardrail against agent mistakes, not a hard security boundary (documented limitation).

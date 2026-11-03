@@ -5,13 +5,14 @@
 | | |
 |---|---|
 | **Author** | [Your name] |
-| **Status** | Draft, v0.3 |
-| **Last updated** | September 30, 2026 |
+| **Status** | Draft, v0.4 |
+| **Last updated** | November 3, 2026 |
 | **Target use** | Personal / portfolio project for DevOps and cybersecurity internship applications |
 | **Inspiration** | "How To Build LLM Wiki In Obsidian: A Memory Layer For Any Agentic AI" (YouTube tutorial by Callum / Wander Lutes) |
 
 ### Changelog
 
+- **v0.4:** Phase 5 (CI automation) decisions and corrections. Finding IDs are `sha256(scanner|rule_id|normalized_path|resource_or_secret_hash)[:12]`, with no line numbers (6.5). Each finding becomes one raw note. The main-branch capture job commits raw evidence directly to `main`. Pull requests run a dry-run capture into a throwaway copy of the vault and upload an artifact, with read-only permissions (5.3, 6.5, 10). "Last seen" and "candidate fixed" state lives in `logs/capture-state.json`, because raw notes are immutable and the manifest records only hashes, so the earlier wording about updating the manifest is superseded (6.5). Scheduled maintenance is report-only: it never runs `manifest` and never commits. Integrity fix: `manifest` and `audit` keep the recorded hash of a modified raw file, so tampering now fails lint (previously `audit` rebuilt the manifest first). Hosted CI never runs an LLM.
 - **v0.3:** Added threat model (section 9), repo layout and sample app (5.6), decision to make `wiki_tool` filesystem-only with Obsidian as an optional viewer, stable finding IDs and idempotent capture, `status_history` finding lifecycle, query spec, automated test requirement, scanner updates (Trivy, gitleaks), split of the review loop from Ollama in the milestones, resolved the open questions, and added tutorial-derived details (Web Clipper capture, Windows launchers, body-text search, PDF folder reserved).
 - **v0.3 implementation clarification:** Product workflow skills live in portable `.agents/skills/` and are entered through root `AGENTS.md`; tool-specific adapters such as `.cursor/rules/` and the development `memory-bank/` are build-time context, not product dependencies. Raw evidence remains immutable, so manifest `processed` state is derived from authoritative wiki citations rather than written back into raw notes.
 - **v0.2:** Initial structured draft.
@@ -75,7 +76,7 @@ Git provides the safety net. Every stage ends in a commit, the wiki log records 
 
 The tutorial runs entirely on one machine and is triggered by prompting an agent. SecVault adds the automation and packaging layer:
 
-- **CI-driven raw capture:** a GitHub Actions workflow runs security scanners on each push or PR and writes normalized, redacted reports into the raw layer.
+- **CI-driven raw capture:** GitHub Actions runs pinned security scanners on each push to `main` and commits one redacted raw note per new finding. Pull requests get a dry-run preview artifact instead of writes to the raw layer.
 - **Lint as a merge gate:** the same Python lint and structure checks the agent uses locally run in CI, so a PR that breaks the schema fails its checks.
 - **Scheduled maintenance:** a scheduled workflow (daily or weekly) runs the deterministic parts of the maintain loop, mirroring the tutorial's idea of running maintenance on a timer or heartbeat.
 - **Automated tests:** `wiki_tool` has a pytest suite with good and bad fixture vaults, and the suite also runs in CI.
@@ -95,7 +96,7 @@ A design decision worth stating explicitly: LLM drafting should not run inside s
 ### 5.5 Data Flow
 
 1. A developer pushes code to the tracked project.
-2. GitHub Actions runs Trivy (config scanning), Checkov, gitleaks, and project tests/linters, then writes normalized and redacted findings into the vault's raw layer. Findings can also be added manually (for example via the Obsidian Web Clipper or by dropping in an incident note).
+2. On each push to `main`, GitHub Actions runs Trivy (config scanning), Checkov, and gitleaks on `sample-app/`, then commits one redacted raw note per new finding. Pull requests get a dry-run preview artifact instead. Findings can also be added manually (for example via the Obsidian Web Clipper or by dropping in an incident note).
 3. On the developer's machine, the ingest skill detects raw sources with no wiki coverage and asks the agent to draft notes using the schema and templates.
 4. Drafts land in a proposed/review folder. A human approves or rejects them.
 5. Approved drafts are applied, and the maintain loop rebuilds the catalog, runs lint, updates the manifest, and logs the change. Everything is committed to git.
@@ -170,6 +171,8 @@ Deterministic scripts do the heavy lifting so results are consistent and cheap. 
 - Validate structure: front matter fields, allowed tags, link integrity, naming conventions, and that no raw file has changed since it was recorded in the manifest (content hash).
 - Search the catalog and run queries for the query skill.
 - Audit the vault and write maintenance entries to the log.
+- Capture scanner findings (Trivy, Checkov, gitleaks) as redacted raw notes with stable IDs, idempotently, and track `candidate_fixed` state.
+- Print a read-only maintenance report (integrity, coverage, catalog, and capture state).
 
 The schema is encoded in these scripts (for example the allowed-tag list), so rules are enforced by code rather than hoped for from the model.
 
@@ -187,10 +190,10 @@ The schema is encoded in these scripts (for example the allowed-tag list), so ru
 
 ### 6.5 Automated Raw Capture (CI)
 
-- Workflow runs scanners on push and PR and writes reports into the raw layer using the source template.
+- Workflow runs pinned scanners on each push to `main`. Each finding becomes one raw note using the source template. Pull requests run the same capture as a dry run into a throwaway copy of the vault and upload an artifact; they never write to the raw layer.
 - Output is normalized and redacted before it is written (see 6.10).
-- Each finding gets a stable ID (for example a hash of scanner, rule ID, file path, and normalized location). Re-running a scan on unchanged code does not create duplicate raw sources or duplicate vulnerability notes, and the same finding seen again updates a "last seen" value in the manifest rather than creating a new file.
-- Scheduled workflow performs deterministic maintenance (catalog rebuild, lint, coverage report) and reports failures.
+- Each finding gets a stable ID: `sha256(scanner|rule_id|normalized_path|resource_or_secret_hash)[:12]`. Line numbers are excluded, so moved code keeps its ID. For gitleaks, the key is a hash of the secret value, and the value itself is never stored. Re-running a scan creates no duplicate raw notes or duplicate vulnerability notes. A finding seen again updates its "last seen" date in `logs/capture-state.json`; the raw note itself is never rewritten.
+- Scheduled workflow is report-only: it lints, computes coverage, and publishes a job summary, failing on integrity errors. It never rewrites the manifest and never commits.
 - Manual capture (Obsidian Web Clipper, pasted incident notes) uses the same source template and lands in `raw/sources/`.
 
 ### 6.6 Human-in-the-Loop Review
@@ -312,7 +315,7 @@ Out of scope for v1: hard isolation against a determined malicious agent (sandbo
 
 - Every wiki note traces back to a raw source, and no raw file is ever modified (verified by manifest hashes).
 - The lint and structure checks pass on the full vault and fail correctly on deliberately malformed fixture notes, covered by automated tests that run in CI.
-- A new scanner finding in a PR reaches the raw layer automatically, with no secrets present in the output, and re-running the scan creates no duplicates.
+- A new scanner finding reaches the raw layer automatically once merged to `main` (pull requests show a dry-run preview), with no secrets present in the output, and re-running the scan creates no duplicates.
 - Querying the catalog for a previously logged vulnerability class returns the correct notes (including matches found only in body text), and the coding assistant can use them.
 - The firewall refuses writes to a non-approved vault.
 - No agent-drafted note reaches the authoritative wiki without explicit human approval.
@@ -340,9 +343,13 @@ Out of scope for v1: hard isolation against a determined malicious agent (sandbo
 - **Obsidian dependency:** optional viewer only; tooling and CI are filesystem-based.
 - **Build agents:** Claude Sonnet 5.5 High plans and Claude Haiku 5.5 (max) implements
   in Cursor; the product remains agent-agnostic.
+- **Finding IDs (Phase 5):** `sha256(scanner|rule_id|normalized_path|resource_or_secret_hash)[:12]`, with no line numbers. Resolves the stable-ID question.
+- **Granularity (Phase 5):** one raw note per finding, named `source-YYYY-MM-DD-<scanner>-<rule>-<id>.md`.
+- **CI delivery (Phase 5):** the main-branch capture job commits raw evidence directly to `main`, and CI never writes to `wiki/`. Branch protection must allow the bot to push; otherwise the job fails before anything is lost.
+- **Scheduled maintenance (Phase 5):** report-only. It never runs `manifest` and never commits. Resolves the auto-PR question.
+- **Hosted CI (Phase 5):** never runs an LLM. Drafting stays local and reviewed.
+- **PR scans (Phase 5):** dry run only, read-only permissions, triggered by `pull_request` (never `pull_request_target`).
 
 ### Still open
 
 - Which Ollama model gives acceptable drafts on the available hardware.
-- Exact stable-ID scheme for findings when code moves between lines or files.
-- Whether the maintain loop should auto-open a PR for scheduled changes or only report them.

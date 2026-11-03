@@ -9,6 +9,12 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github" / "workflows"
 SCAN_ACTION = ROOT / ".github" / "actions" / "run-scanners" / "action.yml"
+ACTIONS_DIR = ROOT / ".github" / "actions"
+DEPENDABOT = ROOT / ".github" / "dependabot.yml"
+# Every workflow and composite action whose steps can run third-party code.
+ACTION_FILES = sorted(WORKFLOWS.glob("*.yml")) + sorted(ACTIONS_DIR.glob("*/action.yml"))
+PINNED_REF = re.compile(r"[\w.-]+/[\w.-]+@[0-9a-f]{40}")
+VERSIONED_PIN = re.compile(r"uses: [\w./-]+@[0-9a-f]{40}\s+# v\d+\.\d+\.\d+\s*$")
 
 
 def _workflow(name: str) -> dict[str, Any]:
@@ -89,3 +95,36 @@ def test_gitleaks_reports_are_not_redacted_before_hashing() -> None:
 
     assert any("gitleaks dir" in line for line in commands)
     assert not any("--redact" in line for line in commands)
+
+
+def _uses_values(document: dict[str, Any]) -> list[str]:
+    steps: list[dict[str, Any]] = []
+    for job in (document.get("jobs") or {}).values():
+        steps.extend(job.get("steps", []))
+    steps.extend((document.get("runs") or {}).get("steps", []))
+    return [str(step["uses"]) for step in steps if "uses" in step]
+
+
+def test_third_party_actions_are_pinned_to_commit_shas() -> None:
+    external = 0
+    for path in ACTION_FILES:
+        document = yaml.safe_load(path.read_text(encoding="utf-8"))
+        for uses in _uses_values(document):
+            if uses.startswith("./"):
+                continue
+            assert PINNED_REF.fullmatch(uses), f"{path.name}: {uses}"
+            external += 1
+    assert external > 0
+
+
+def test_pinned_actions_keep_their_release_in_a_comment() -> None:
+    for path in ACTION_FILES:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if "uses: " in line and "uses: ./" not in line:
+                assert VERSIONED_PIN.search(line), f"{path.name}: {line.strip()}"
+
+
+def test_dependabot_keeps_action_pins_current() -> None:
+    config = yaml.safe_load(DEPENDABOT.read_text(encoding="utf-8"))
+    ecosystems = {update["package-ecosystem"] for update in config["updates"]}
+    assert "github-actions" in ecosystems

@@ -1,0 +1,8 @@
+# Opens weekly pull requests that move the commit-SHA pins of third-party
+# actions to newer releases. Scanner versions are bumped by hand.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

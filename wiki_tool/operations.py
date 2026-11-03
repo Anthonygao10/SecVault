@@ -18,6 +18,8 @@ from typing import Any
 
 import yaml
 
+from .redact import contains_secret
+
 COMMON_FIELDS = ("type", "title", "tags", "created", "updated", "sources")
 SOURCE_FIELDS = COMMON_FIELDS + (
     "finding_id",
@@ -46,16 +48,6 @@ TYPE_DIRECTORIES = {
 GENERATED_PATHS = {"logs/catalog.json", "raw/manifest.json"}
 WIKILINK_PATTERN = re.compile(r"\[\[([^\]]+)\]\]")
 DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}")
-SECRET_PATTERNS = (
-    re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
-    re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-    re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b"),
-    re.compile(
-        r"(?im)^\s*[A-Z0-9_]*(?:API[_-]?KEY|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|"
-        r"PASSWORD|SECRET)[A-Z0-9_]*\s*[:=]\s*['\"]?[A-Za-z0-9_./+=-]{16,}"
-    ),
-    re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]{20,}\b"),
-)
 
 
 class VaultError(RuntimeError):
@@ -335,11 +327,19 @@ def _name_matches(path: Path, note_type: str, vault: Path) -> bool:
 
 
 def _secret_matches(text: str) -> bool:
-    return any(pattern.search(text) for pattern in SECRET_PATTERNS)
+    return contains_secret(text)
 
 
 def build_catalog(vault: str | Path) -> dict[str, Any]:
-    """Build and write the searchable catalog."""
+    """Build the searchable catalog and write it to `logs/catalog.json`."""
+    root = vault_path(vault)
+    catalog = collect_catalog(root)
+    _write_json(root / "logs" / "catalog.json", catalog)
+    return catalog
+
+
+def collect_catalog(vault: str | Path) -> dict[str, Any]:
+    """Build the searchable catalog in memory without writing it."""
     root = vault_path(vault)
     entries: list[dict[str, Any]] = []
     for path in iter_note_files(root):
@@ -363,9 +363,7 @@ def build_catalog(vault: str | Path) -> dict[str, Any]:
             }
         )
 
-    catalog = {"version": 1, "notes": entries}
-    _write_json(root / "logs" / "catalog.json", catalog)
-    return catalog
+    return {"version": 1, "notes": entries}
 
 
 TEXT_SUFFIXES = {".md", ".json", ".txt", ".yaml", ".yml"}
@@ -680,7 +678,8 @@ def query_catalog(
     return results[: max(0, limit)]
 
 
-def _append_log(root: Path, message: str) -> None:
+def append_log(root: Path, message: str) -> None:
+    """Append one timestamped entry to the maintenance log."""
     log_path = root / "logs" / "wiki-log.md"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     if not log_path.exists():
@@ -701,7 +700,7 @@ def audit_vault(vault: str | Path) -> dict[str, Any]:
         term: len(query_catalog(root, term, limit=5)) for term in ("vulnerability", "security")
     }
     status = "passed" if lint.ok else "failed"
-    _append_log(
+    append_log(
         root,
         f"audit {status}; notes={len(catalog['notes'])}; "
         f"uncovered_sources={len(uncovered)}; errors={len(lint.errors)}",

@@ -1,0 +1,83 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.74.0"
+  },
+  "ArtifactName": "sample-app",
+  "ArtifactType": "filesystem",
+  "Results": [
+    {
+      "Target": ".",
+      "Class": "config",
+      "Type": "terraform"
+    },
+    {
+      "Target": "main.tf",
+      "Class": "config",
+      "Type": "terraform",
+      "Misconfigurations": [
+        {
+          "Type": "Terraform Security Check",
+          "ID": "AWS-0086",
+          "Title": "S3 Access block should block public ACL",
+          "Description": "Public access block should block public ACLs.",
+          "Message": "Public access block does not block public ACLs. Test key AKIAXXXXXXXXXXXXXXXX.",
+          "Namespace": "builtin.aws.s3.aws0086",
+          "Resolution": "Enable blocking any PUT calls with a public ACL specified",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/aws-0086",
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "AWS",
+            "Service": "s3",
+            "StartLine": 25,
+            "EndLine": 29,
+            "Resource": "aws_s3_bucket_public_access_block.public_demo",
+            "Code": {
+              "Lines": [
+                {
+                  "Number": 25,
+                  "Content": "  block_public_acls = false # FAKE-CODE-SNIPPET-MARKER"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "Type": "Terraform Security Check",
+          "ID": "AWS-0107",
+          "Title": "Security group ingress is unrestricted",
+          "Description": "Security groups should not allow unrestricted ingress.",
+          "Message": "Security group allows ingress from 0.0.0.0/0.",
+          "Namespace": "builtin.aws.ec2.aws0107",
+          "Resolution": "Restrict ingress to known address ranges",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/aws-0107",
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "AWS",
+            "Service": "ec2",
+            "StartLine": 67,
+            "EndLine": 73,
+            "Resource": "aws_security_group.open_demo"
+          }
+        },
+        {
+          "Type": "Terraform Security Check",
+          "ID": "AWS-0001",
+          "Title": "A passing check must not be captured",
+          "Message": "Passing result.",
+          "Severity": "LOW",
+          "Status": "PASS",
+          "CauseMetadata": {
+            "Provider": "AWS",
+            "Service": "s3",
+            "StartLine": 18,
+            "EndLine": 18,
+            "Resource": "aws_s3_bucket.public_demo"
+          }
+        }
+      ]
+    }
+  ]
+}

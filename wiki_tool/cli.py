@@ -6,8 +6,10 @@ import argparse
 import json
 import sys
 from collections.abc import Sequence
+from datetime import date
 from pathlib import Path
 
+from .capture import PARSERS, capture_findings
 from .operations import (
     DraftApplyError,
     VaultError,
@@ -19,6 +21,7 @@ from .operations import (
     query_catalog,
     update_manifest,
 )
+from .report import build_report, render_markdown
 
 COMMANDS = {
     "index": "Build the note catalog.",
@@ -28,7 +31,16 @@ COMMANDS = {
     "query": "Search the note catalog.",
     "apply": "Apply an approved draft from proposed/.",
     "audit": "Run the maintenance checks.",
+    "capture": "Capture scanner findings as redacted raw evidence.",
+    "report": "Summarize integrity, coverage, and capture state.",
 }
+
+
+def _iso_date(value: str) -> date:
+    try:
+        return date.fromisoformat(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("expected a date in YYYY-MM-DD form") from exc
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -65,8 +77,43 @@ def build_parser() -> argparse.ArgumentParser:
                 action="store_true",
                 help="Allow replacing an existing wiki note.",
             )
+        elif name == "capture":
+            command_parser.add_argument(
+                "--scanner",
+                required=True,
+                choices=sorted(PARSERS),
+                help="Scanner that produced the report.",
+            )
+            command_parser.add_argument(
+                "--input",
+                required=True,
+                type=Path,
+                help="JSON report written by the scanner.",
+            )
+            command_parser.add_argument(
+                "--path-prefix",
+                help="Repository path the scan ran under, for example sample-app.",
+            )
+            command_parser.add_argument(
+                "--date",
+                type=_iso_date,
+                help="Capture date in YYYY-MM-DD form (default: today, UTC).",
+            )
+            command_parser.add_argument(
+                "--revision",
+                help="Commit identifier recorded in each new raw note.",
+            )
 
     return parser
+
+
+def _print_lint(lint: dict[str, object]) -> None:
+    if lint.get("ok"):
+        print(f"lint: PASS (checked {lint.get('checked_notes', 0)} notes)")
+        return
+    print("lint: FAIL")
+    for error in lint.get("errors", []):
+        print(f"- {error}")
 
 
 def _text_result(command: str, result: object) -> None:
@@ -89,6 +136,19 @@ def _text_result(command: str, result: object) -> None:
             print("\n".join(result))
         else:
             print("All raw sources have wiki coverage.")
+        return
+    if command == "capture" and isinstance(result, dict):
+        print(
+            f"captured {result['scanner']} ({result['findings']} findings): "
+            f"{len(result['created'])} new, {result['known']} already captured, "
+            f"{len(result['reopened'])} reopened, "
+            f"{len(result['candidate_fixed'])} candidate_fixed"
+        )
+        for path in result["created"]:
+            print(f"  + {path}")
+        for finding_id in result["candidate_fixed"]:
+            print(f"  ? {finding_id}: candidate for fixed; a human confirms it")
+        _print_lint(result["lint"])
         return
     print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
 
@@ -121,6 +181,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         elif args.command == "apply":
             result = apply_draft(args.vault, args.draft, overwrite=args.overwrite)
+        elif args.command == "capture":
+            result = capture_findings(
+                args.vault,
+                args.scanner,
+                args.input,
+                path_prefix=args.path_prefix,
+                captured_on=args.date,
+                revision=args.revision,
+            )
+        elif args.command == "report":
+            result = build_report(args.vault)
         else:
             result = audit_vault(args.vault)
     except (VaultError, DraftApplyError) as exc:
@@ -129,12 +200,18 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
+    elif args.command == "report":
+        print(render_markdown(result), end="")
     else:
         _text_result(args.command, result)
 
     if args.command == "lint" and isinstance(result, dict) and not result.get("ok"):
         return 1
     if args.command == "audit" and isinstance(result, dict) and result.get("status") != "passed":
+        return 1
+    if args.command == "capture" and isinstance(result, dict) and not result["lint"]["ok"]:
+        return 1
+    if args.command == "report" and isinstance(result, dict) and not result["ok"]:
         return 1
     if (
         args.command == "manifest"

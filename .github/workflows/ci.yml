@@ -1,7 +1,8 @@
 name: CI
 
-# Required pull request check. Deterministic only: no scanners, no network
-# model calls, and no writes to the repository.
+# Required pull request checks. Deterministic only: no model calls and no writes
+# to the repository. The ci job runs lint and tests. The secrets job runs the
+# redacted gitleaks gate over the full history.
 on:
   pull_request:
   push:
@@ -43,3 +44,21 @@ jobs:
 
       - name: Vault lint
         run: python -m wiki_tool lint
+
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: the gate must see secrets that were committed and later deleted.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install pinned gitleaks
+        uses: ./.github/actions/install-gitleaks
+
+      - name: Scan full history (redacted output)
+        # --redact keeps secret values out of public logs. run-scanners must not use it,
+        # because capture derives finding IDs from the real secret hash.
+        run: gitleaks git --redact --no-banner --config .github/gitleaks-gate.toml .

@@ -1,0 +1,32 @@
+name: Install pinned gitleaks
+description: >-
+  Download gitleaks from its GitHub release, check the archive against the
+  SHA-256 pinned in this file, and put the binary on PATH for later steps. Used by
+  the repo-wide secret gate and by the scanner run.
+
+runs:
+  using: composite
+  steps:
+    - name: Install pinned gitleaks
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GITLEAKS_VERSION: "8.30.1"
+        GITLEAKS_SHA256: "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
+      run: |
+        set -euo pipefail
+        bin="$RUNNER_TEMP/bin"
+        downloads="$RUNNER_TEMP/downloads"
+        mkdir -p "$bin" "$downloads"
+
+        gitleaks_archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+        gh release download "v${GITLEAKS_VERSION}" --repo gitleaks/gitleaks \
+          --pattern "$gitleaks_archive" --dir "$downloads"
+        echo "${GITLEAKS_SHA256}  ${downloads}/${gitleaks_archive}" | sha256sum --check -
+        tar -xzf "$downloads/$gitleaks_archive" -C "$bin" gitleaks
+
+        # Add the directory once, even when an earlier step already added it.
+        case ":$PATH:" in
+          *":$bin:"*) ;;
+          *) echo "$bin" >> "$GITHUB_PATH" ;;
+        esac

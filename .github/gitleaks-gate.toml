@@ -1,0 +1,10 @@
+# Repo-wide secret gate for pull requests and pushes to main (gitleaks git).
+# Only the secrets job passes this file, with --config. gitleaks does not load it
+# by itself. Allowlist entries here apply to the gate alone. The capture scan of
+# sample-app/ uses gitleaks defaults and must keep seeing the demo findings.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Intentionally fake secrets that give the scanners something to find"
+paths = ['''^sample-app/''']

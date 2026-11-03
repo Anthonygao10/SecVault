@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import tomllib
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +16,10 @@ DEPENDABOT = ROOT / ".github" / "dependabot.yml"
 ACTION_FILES = sorted(WORKFLOWS.glob("*.yml")) + sorted(ACTIONS_DIR.glob("*/action.yml"))
 PINNED_REF = re.compile(r"[\w.-]+/[\w.-]+@[0-9a-f]{40}")
 VERSIONED_PIN = re.compile(r"uses: [\w./-]+@[0-9a-f]{40}\s+# v\d+\.\d+\.\d+\s*$")
+INSTALL_GITLEAKS = ACTIONS_DIR / "install-gitleaks" / "action.yml"
+GATE_CONFIG = ROOT / ".github" / "gitleaks-gate.toml"
+# Paths the repo-wide gate may skip. Adding one is a reviewed change, not a default.
+REVIEWED_GATE_PATHS = ["^sample-app/"]
 
 
 def _workflow(name: str) -> dict[str, Any]:
@@ -75,15 +80,20 @@ def test_maintenance_is_report_only() -> None:
         assert forbidden not in text, forbidden
 
 
-def test_scanner_archives_are_pinned_by_sha256() -> None:
-    action = yaml.safe_load(SCAN_ACTION.read_text(encoding="utf-8"))
-    env = action["runs"]["steps"][0]["env"]
+def _first_step_env(path: Path) -> dict[str, str]:
+    document = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return document["runs"]["steps"][0]["env"]
 
-    for name in ("TRIVY_SHA256", "GITLEAKS_SHA256"):
-        assert re.fullmatch(r"[0-9a-f]{64}", env[name]), name
-    assert env["TRIVY_VERSION"] == "0.74.0"
-    assert env["GITLEAKS_VERSION"] == "8.30.1"
-    assert env["CHECKOV_VERSION"] == "3.3.20"
+
+def test_scanner_archives_are_pinned_by_sha256() -> None:
+    trivy_env = _first_step_env(SCAN_ACTION)
+    gitleaks_env = _first_step_env(INSTALL_GITLEAKS)
+
+    assert re.fullmatch(r"[0-9a-f]{64}", trivy_env["TRIVY_SHA256"])
+    assert re.fullmatch(r"[0-9a-f]{64}", gitleaks_env["GITLEAKS_SHA256"])
+    assert trivy_env["TRIVY_VERSION"] == "0.74.0"
+    assert gitleaks_env["GITLEAKS_VERSION"] == "8.30.1"
+    assert trivy_env["CHECKOV_VERSION"] == "3.3.20"
 
 
 def test_gitleaks_reports_are_not_redacted_before_hashing() -> None:
@@ -128,3 +138,37 @@ def test_dependabot_keeps_action_pins_current() -> None:
     config = yaml.safe_load(DEPENDABOT.read_text(encoding="utf-8"))
     ecosystems = {update["package-ecosystem"] for update in config["updates"]}
     assert "github-actions" in ecosystems
+
+
+def test_secrets_gate_scans_full_history_with_redacted_output() -> None:
+    workflow = _workflow("ci.yml")
+    job = workflow["jobs"]["secrets"]
+    checkout = next(
+        step for step in job["steps"] if str(step.get("uses", "")).startswith("actions/checkout@")
+    )
+    assert checkout["with"]["fetch-depth"] == 0
+    assert checkout["with"]["persist-credentials"] is False
+    assert "permissions" not in job  # inherits the workflow-level contents: read
+    assert not any("upload-artifact" in str(step) for step in job["steps"])
+
+    text = _run_text(workflow, "secrets")
+    assert "gitleaks git" in text
+    assert "--redact" in text
+    assert "--config .github/gitleaks-gate.toml" in text
+
+
+def test_gate_allowlist_covers_only_reviewed_paths() -> None:
+    config = tomllib.loads(GATE_CONFIG.read_text(encoding="utf-8"))
+    assert config["extend"]["useDefault"] is True
+    paths = [path for block in config.get("allowlists", []) for path in block.get("paths", [])]
+    assert sorted(paths) == sorted(REVIEWED_GATE_PATHS)
+
+
+def test_capture_scan_never_uses_the_gate_config() -> None:
+    commands = [
+        line
+        for line in SCAN_ACTION.read_text(encoding="utf-8").splitlines()
+        if not line.lstrip().startswith("#")
+    ]
+    assert any("gitleaks dir" in line for line in commands)
+    assert not any("--config" in line for line in commands)

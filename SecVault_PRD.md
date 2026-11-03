@@ -5,13 +5,14 @@
 | | |
 |---|---|
 | **Author** | [Your name] |
-| **Status** | Draft, v0.4 |
+| **Status** | Draft, v0.5 |
 | **Last updated** | November 3, 2026 |
 | **Target use** | Personal / portfolio project for DevOps and cybersecurity internship applications |
 | **Inspiration** | "How To Build LLM Wiki In Obsidian: A Memory Layer For Any Agentic AI" (YouTube tutorial by Callum / Wander Lutes) |
 
 ### Changelog
 
+- **v0.5:** Repo-wide secret gate and action pinning. CI adds a required `secrets` check that runs gitleaks over the full git history with `--redact`. Its allowlist (`.github/gitleaks-gate.toml`) skips only `sample-app/`, which holds intentionally fake secrets, and a test pins that list. The capture scan still runs gitleaks without a gate config, so the demo findings stay visible to capture (5.3). Third-party actions are pinned to commit SHAs with their release in a comment, and Dependabot proposes weekly updates (5.3). Scanner archives stay pinned by SHA-256.
 - **v0.4:** Phase 5 (CI automation) decisions and corrections. Finding IDs are `sha256(scanner|rule_id|normalized_path|resource_or_secret_hash)[:12]`, with no line numbers (6.5). Each finding becomes one raw note. The main-branch capture job commits raw evidence directly to `main`. Pull requests run a dry-run capture into a throwaway copy of the vault and upload an artifact, with read-only permissions (5.3, 6.5, 10). "Last seen" and "candidate fixed" state lives in `logs/capture-state.json`, because raw notes are immutable and the manifest records only hashes, so the earlier wording about updating the manifest is superseded (6.5). Scheduled maintenance is report-only: it never runs `manifest` and never commits. Integrity fix: `manifest` and `audit` keep the recorded hash of a modified raw file, so tampering now fails lint (previously `audit` rebuilt the manifest first). Hosted CI never runs an LLM.
 - **v0.3:** Added threat model (section 9), repo layout and sample app (5.6), decision to make `wiki_tool` filesystem-only with Obsidian as an optional viewer, stable finding IDs and idempotent capture, `status_history` finding lifecycle, query spec, automated test requirement, scanner updates (Trivy, gitleaks), split of the review loop from Ollama in the milestones, resolved the open questions, and added tutorial-derived details (Web Clipper capture, Windows launchers, body-text search, PDF folder reserved).
 - **v0.3 implementation clarification:** Product workflow skills live in portable `.agents/skills/` and are entered through root `AGENTS.md`; tool-specific adapters such as `.cursor/rules/` and the development `memory-bank/` are build-time context, not product dependencies. Raw evidence remains immutable, so manifest `processed` state is derived from authoritative wiki citations rather than written back into raw notes.
@@ -303,7 +304,7 @@ SecVault feeds untrusted text to an agent that can write files, so it needs an e
 | Threat | Mitigation |
 |---|---|
 | **Prompt injection through raw content** (scanner output, incident notes, clipped web pages containing instructions) | `agents.md` states raw content is data, not instructions; drafts go to `proposed/` for human review; agent permissions are limited to allowed paths; injection fixture tested in Phase 6. |
-| **Secrets leaking into the repo** (scanner output, logs, diffs) | Redaction in capture, secret-like string lint, gitleaks in CI, private repo, `.gitignore`. |
+| **Secrets leaking into the repo** (scanner output, logs, diffs) | Redaction in capture, secret-like string lint, a repo-wide gitleaks gate over full history in CI, private repo, `.gitignore`. |
 | **Sensitive findings sent to hosted models** | Local-first default (Ollama); unfixed-vulnerability records excluded from hosted use unless the user opts in. |
 | **Malicious or accidental edits to the schema layer** (for example a PR weakening `agents.md` or `tags.yaml`) | Schema files covered by CODEOWNERS and required review; CI fails if raw files are modified after capture. |
 | **Agent writing outside the vault** | Path rules in `agents.md`, firewall wrapper for Obsidian actions, git diff review before commit. |

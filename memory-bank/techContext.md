@@ -10,7 +10,7 @@
 | Tooling | Python 3.11+ (`wiki_tool`) with `venv` + `pip`, PyYAML, pytest, and Ruff |
 | Coding agent | Any agentic coding tool; agent-agnostic by design |
 | Local model | Ollama; model selection is still open |
-| CI/CD | GitHub Actions: required `ci` check (Ruff, pytest, vault lint); scan and capture (dry run on PRs, commits to `main`); weekly report-only maintenance |
+| CI/CD | GitHub Actions: required `ci` (Ruff, pytest, vault lint) and `secrets` (gitleaks over full history) checks; third-party actions pinned to commit SHAs; scan and capture (dry run on PRs, commits to `main`); weekly report-only maintenance |
 | Security scanning | Trivy, Checkov, gitleaks, project linters, and project tests |
 | Packaging | Docker image for tooling and scripts |
 | Access control | Obsidian-safe wrapper script and skill with a vault allowlist |
@@ -19,7 +19,7 @@
 
 - OS: Windows 10 (win32 10.0.19045)
 - Shell: PowerShell
-- Workspace: `C:\Users\Antho\Downloads\Personal Projects\SecVault`
+- Workspace: the local clone of this repository
 - Windows launchers are required (`.bat`/`.ps1`) for checking raw sources, drafting with Ollama, and applying the latest draft.
 - Scripts and documentation must handle Windows paths and PowerShell quoting safely.
 

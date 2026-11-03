@@ -46,8 +46,10 @@ Approved drafts enter `wiki/` only through the apply workflow.
 
 ## Automated capture and checks (CI)
 
-- `ci` is the required pull request check. It runs Ruff, pytest, and
-  `wiki_tool lint`. It uses no scanners and no model calls.
+- `ci` and `secrets` are the required pull request checks. `ci` runs Ruff,
+  pytest, and `wiki_tool lint`. `secrets` runs gitleaks over the full git
+  history, with the allowlist in `.github/gitleaks-gate.toml`. Neither check
+  calls a model.
 - `Scan and capture` runs the pinned scanners on `sample-app/`. A pull request
   gets a dry-run preview artifact only. A push to `main` commits new raw notes
   under `raw/` and their `logs/` state; it never touches `wiki/`.

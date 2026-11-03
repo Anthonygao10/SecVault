@@ -40,13 +40,22 @@ not lint cleanly. `report` is read-only.
 ## Continuous integration
 
 - **`ci`** runs Ruff, pytest, and vault lint on pull requests and pushes to
-  `main`. Mark it as a required status check in branch protection.
+  `main`. Mark `ci` and `secrets` as required status checks in branch protection.
+- **`secrets`** runs gitleaks over the full git history on the same events. It
+  uses `--redact`, so public logs never print secret values. The check fails on
+  any secret, including one that was committed and later deleted. The allowlist in
+  `.github/gitleaks-gate.toml` skips only `sample-app/`, which holds intentionally
+  fake secrets. Capture scans run gitleaks without that config and without
+  `--redact`, because their finding IDs need the real secret hash.
 - **Scan and capture** runs the pinned scanners (Trivy 0.74.0, gitleaks 8.30.1,
   Checkov 3.3.20) on `sample-app/`. Pull requests get a dry-run preview artifact.
   A push to `main` commits new raw notes as `github-actions[bot]`. Branch
   protection must allow that push. If it does not, the job fails, and the next
   run recomputes the same findings.
 - **Maintenance report** runs weekly and publishes a summary only.
+- Third-party actions are pinned to full commit SHAs, with the release in a
+  trailing comment. Dependabot opens weekly pull requests to update them, and a
+  test fails if any third-party `uses:` reference is not pinned.
 
 Hosted CI never runs a language model. Drafting stays local and goes through
 human review.

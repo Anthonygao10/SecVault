@@ -4,7 +4,7 @@ _Last updated: 2026-11-03_
 
 ## Current focus
 
-Planning is complete at the PRD level (v0.4). Phases 1 through 5 are complete.
+Planning is complete at the PRD level (v0.5). Phases 1 through 5 are complete.
 The build-time memory bank and Cursor rules are assistant context;
 the portable product entry point is `AGENTS.md`, with product skills under
 `.agents/skills/`. The next work is Phase 6: the review loop.
@@ -15,7 +15,7 @@ the portable product entry point is `AGENTS.md`, with product skills under
 2. Add a prompt-injection fixture to the test suite.
 3. Keep hosted CI free of LLM drafting; drafting remains local and reviewed.
 4. Preserve the Phase 4 demo as the regression narrative for later phases.
-5. Manual GitHub step: require the `ci` check in branch protection, and allow
+5. Manual GitHub step: require the `ci` and `secrets` checks in branch protection, and allow
    `github-actions[bot]` to push to `main` for capture (see Phase 5 decisions).
 
 ## Open questions
@@ -72,4 +72,11 @@ These remain open in PRD section 12:
 - Scheduled maintenance is report-only: no `manifest`, no commits.
 - Hosted CI never runs an LLM.
 - Integrity fix: a modified raw file keeps its recorded hash, so `manifest` and `audit` cannot re-bless it.
-- Scanner archives are pinned and SHA-256 checked in `.github/actions/run-scanners/action.yml`. gitleaks runs without `--redact`, because finding IDs depend on the secret hash.
+- Scanner archives are pinned and SHA-256 checked in `.github/actions/run-scanners/action.yml` and `.github/actions/install-gitleaks/action.yml`. Capture runs gitleaks without `--redact`, because finding IDs depend on the secret hash.
+
+## Decisions made after Phase 5 (gate and pins)
+
+- Third-party actions are pinned to full commit SHAs, with the release in a trailing comment: `actions/checkout` v7.0.1, `actions/setup-python` v7.1.0, and `actions/upload-artifact` v7.0.2. All three run on node24. Dependabot proposes weekly updates, and `tests/test_workflows.py` fails on any unpinned third-party `uses:`.
+- Repo-wide `secrets` gate: `gitleaks git --redact` over the full history, with `.github/gitleaks-gate.toml`. Its allowlist covers only `sample-app/`, and a test pins that list. Verification found no other hits in history, so no further entries were added.
+- Gate output is redacted for public logs. Capture scans never use `--redact` or the gate config, because finding IDs need the real secret hash and capture must still see the demo findings.
+- The gate scans history, so a secret that was committed and later deleted still fails it. Clearing one needs a reviewed allowlist entry; history is not rewritten.

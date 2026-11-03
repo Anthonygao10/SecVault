@@ -4,7 +4,7 @@ _Last updated: 2026-11-03_
 
 ## Overall status
 
-The PRD is drafted (v0.4). Phases 1 through 5 are complete; Phase 6 is next.
+The PRD is drafted (v0.5). Phases 1 through 5 are complete; Phase 6 is next.
 
 ## Completed
 
@@ -12,6 +12,7 @@ The PRD is drafted (v0.4). Phases 1 through 5 are complete; Phase 6 is next.
 - [x] PRD v0.3: threat model, repository layout, sample app, stable IDs, `status_history`, query specification, test requirements, scanner updates, and resolved decisions
 - [x] Development memory bank created
 - [x] PRD v0.4: Phase 5 decisions and the raw-integrity fix (stable IDs, one raw note per finding, main-only capture, report-only maintenance)
+- [x] PRD v0.5: repo-wide secret gate and SHA-pinned third-party actions
 
 ## Phase checklist
 
@@ -28,7 +29,7 @@ The PRD is drafted (v0.4). Phases 1 through 5 are complete; Phase 6 is next.
 
 - Hosted workflows are validated locally (actionlint, a YAML parse, and the workflows' own bash blocks run against a clone), but they have not run on GitHub-hosted runners yet. The first run on `main` is the real test.
 - Branch protection may block the bot's direct push to `main`. The capture job then fails safely; configure protection to allow it.
-- gitleaks coverage in CI is limited to `sample-app/`. A repo-wide gitleaks gate with an allowlist is a follow-up.
+- The repo-wide `secrets` gate scans full history. A secret committed and later deleted still fails it; clearing one needs a reviewed allowlist entry, because history is not rewritten. The allowlist covers only `sample-app/`.
 - Local model quality is unknown; the workflow should be proven with a stronger agent before Ollama is introduced.
 - The firewall is a guardrail, not a hard security boundary; this limitation must remain documented.
 
@@ -42,3 +43,5 @@ The PRD is drafted (v0.4). Phases 1 through 5 are complete; Phase 6 is next.
 | 2026-11-03 | Phase 5: stable finding IDs (12-hex, no line numbers); one raw note per finding; capture state in `logs/capture-state.json` |
 | 2026-11-03 | Phase 5: main-only capture commits raw evidence directly to `main` as the bot; PRs run a dry run with read-only permissions; scheduled maintenance is report-only |
 | 2026-11-03 | Phase 5: fixed the raw-integrity gap (`audit` re-blessed modified raw files); capture job lints and tests before committing |
+| 2026-11-03 | Pinned third-party actions to commit SHAs (checkout v7.0.1, setup-python v7.1.0, upload-artifact v7.0.2; all node24) and enabled Dependabot updates |
+| 2026-11-03 | Added the repo-wide `secrets` gate: `gitleaks git --redact` over full history, allowlist limited to `sample-app/`; capture keeps gitleaks defaults |

@@ -102,8 +102,8 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install SecVault
-        run: python -m pip install -e .
+      - name: Install SecVault and dev tools
+        run: python -m pip install -e ".[dev]"
 
       - name: Run scanners
         uses: ./.github/actions/run-scanners
@@ -116,6 +116,14 @@ jobs:
               --input "$RUNNER_TEMP/scan/$scanner.json" --path-prefix sample-app \
               --revision "${GITHUB_SHA:0:12}"
           done
+
+      # A GITHUB_TOKEN push does not start ci.yml, so this job checks the code and
+      # the vault itself before anything reaches main.
+      - name: Lint and test before committing
+        run: |
+          set -euo pipefail
+          python -m wiki_tool lint
+          python -m pytest -q
 
       - name: Commit new raw evidence to main
         run: |

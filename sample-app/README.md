@@ -30,3 +30,5 @@ Findings are expected: Trivy reports nine Terraform misconfigurations,
 Checkov reports failing Terraform checks, and gitleaks reports the deliberately
 fake API key. A non-zero scanner exit code means findings were detected; it is
 not a failed SecVault build.
+
+This paragraph is a no-op edit that exercises the pull request capture preview.

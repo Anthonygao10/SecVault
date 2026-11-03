@@ -6,11 +6,11 @@
 |---|---|
 | Knowledge base | Obsidian vault (Markdown, YAML front matter, wiki links); viewer/editor only |
 | Obsidian CLI | Local interactive agent sessions only; not in CI or Docker |
-| Version control | Git, with commits at each workflow stage and a private remote |
+| Version control | Git, with commits at each workflow stage and a GitHub remote (public for this portfolio repo) |
 | Tooling | Python 3.11+ (`wiki_tool`) with `venv` + `pip`, PyYAML, pytest, and Ruff |
 | Coding agent | Any agentic coding tool; agent-agnostic by design |
 | Local model | Ollama; model selection is still open |
-| CI/CD | GitHub Actions: required `ci` (Ruff, pytest, vault lint) and `secrets` (gitleaks over full history) checks; third-party actions pinned to commit SHAs; scan and capture (dry run on PRs, commits to `main`); weekly report-only maintenance |
+| CI/CD | GitHub Actions: `ci` (Ruff, pytest, vault lint) and `secrets` (gitleaks over full history) checks, which report on every push and PR but are not enforced yet; third-party actions pinned to commit SHAs; scan and capture (dry run on PRs, commits to `main`); weekly report-only maintenance |
 | Security scanning | Trivy, Checkov, gitleaks, project linters, and project tests |
 | Packaging | Docker image for tooling and scripts |
 | Access control | Obsidian-safe wrapper script and skill with a vault allowlist |

@@ -1,6 +1,6 @@
 name: CI
 
-# Required pull request checks. Deterministic only: no model calls and no writes
+# Pull request checks. Deterministic only: no model calls and no writes
 # to the repository. The ci job runs lint and tests. The secrets job runs the
 # redacted gitleaks gate over the full history.
 on:

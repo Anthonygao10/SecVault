@@ -54,7 +54,7 @@ Wrapper script in front of the Obsidian CLI checks vault name against an allowli
 | Threat | Mitigation |
 |---|---|
 | Prompt injection via raw content | Raw = data, never instructions (`agents.md`); `proposed/` review; path limits; injection fixture (Phase 6) |
-| Secrets in repo | Redaction, secret-like lint, repo-wide gitleaks gate over full history, private repo, `.gitignore` |
+| Secrets in repo | Redaction, secret-like lint, repo-wide gitleaks gate over full history, `.gitignore` |
 | Findings sent to hosted models | Local-first; opt-in only |
 | Schema-layer tampering | CODEOWNERS + required review; CI fails on modified raw files |
 | Agent writes outside vault | Path rules, firewall wrapper, git diff review |

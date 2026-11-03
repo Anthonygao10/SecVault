@@ -13,6 +13,7 @@ The PRD is drafted (v0.5). Phases 1 through 5 are complete; Phase 6 is next.
 - [x] Development memory bank created
 - [x] PRD v0.4: Phase 5 decisions and the raw-integrity fix (stable IDs, one raw note per finding, main-only capture, report-only maintenance)
 - [x] PRD v0.5: repo-wide secret gate and SHA-pinned third-party actions
+- [x] Public GitHub repo `Anthonygao10/SecVault`; CI, the secrets gate, capture, the PR dry run, and maintenance verified on GitHub-hosted runners (2026-11-03)
 
 ## Phase checklist
 
@@ -27,8 +28,11 @@ The PRD is drafted (v0.5). Phases 1 through 5 are complete; Phase 6 is next.
 
 ## Known risks
 
-- Hosted workflows are validated locally (actionlint, a YAML parse, and the workflows' own bash blocks run against a clone), but they have not run on GitHub-hosted runners yet. The first run on `main` is the real test.
-- Branch protection may block the bot's direct push to `main`. The capture job then fails safely; configure protection to allow it.
+- Hosted workflows have run on GitHub-hosted runners (2026-11-03). One real bug surfaced and is fixed: the Checkov venv on `GITHUB_PATH` shadowed setup-python's `python` in the capture job. The run record is in `activeContext.md`.
+- Branch rules on `main` block force-push and deletion only. Requiring pull requests would block the capture bot's direct push, so `ci` and `secrets` report on every push and PR but do not gate anything yet. This decision is open.
+- Bot commits made with `GITHUB_TOKEN` do not start `ci.yml`, so the `secrets` gate does not scan the evidence commit. Capture output is redacted and hash-based by design.
+- The path filters in `scan-capture.yml` do not include `.github/actions/install-gitleaks/**`, so a change only to that action does not trigger a capture.
+- Checkov is pinned by version but not hash-locked.
 - The repo-wide `secrets` gate scans full history. A secret committed and later deleted still fails it; clearing one needs a reviewed allowlist entry, because history is not rewritten. The allowlist covers only `sample-app/`.
 - Local model quality is unknown; the workflow should be proven with a stronger agent before Ollama is introduced.
 - The firewall is a guardrail, not a hard security boundary; this limitation must remain documented.
@@ -45,3 +49,5 @@ The PRD is drafted (v0.5). Phases 1 through 5 are complete; Phase 6 is next.
 | 2026-11-03 | Phase 5: fixed the raw-integrity gap (`audit` re-blessed modified raw files); capture job lints and tests before committing |
 | 2026-11-03 | Pinned third-party actions to commit SHAs (checkout v7.0.1, setup-python v7.1.0, upload-artifact v7.0.2; all node24) and enabled Dependabot updates |
 | 2026-11-03 | Added the repo-wide `secrets` gate: `gitleaks git --redact` over full history, allowlist limited to `sample-app/`; capture keeps gitleaks defaults |
+| 2026-11-03 | Created the public repo `Anthonygao10/SecVault`. Branch rules on `main` block force-push and deletion only; requiring pull requests is deferred because the GitHub Actions bypass is unavailable on a personal repo |
+| 2026-11-03 | Kept the Checkov venv off `GITHUB_PATH`, which had shadowed setup-python's `python` in the capture job; Checkov runs by path, with regression tests |

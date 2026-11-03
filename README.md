@@ -40,7 +40,9 @@ not lint cleanly. `report` is read-only.
 ## Continuous integration
 
 - **`ci`** runs Ruff, pytest, and vault lint on pull requests and pushes to
-  `main`. Mark `ci` and `secrets` as required status checks in branch protection.
+  `main`. They report on every push and pull request. Requiring them before merge
+  would need a pull-request rule, which blocks the capture bot's direct push, so this
+  repository does not enforce them yet.
 - **`secrets`** runs gitleaks over the full git history on the same events. It
   uses `--redact`, so public logs never print secret values. The check fails on
   any secret, including one that was committed and later deleted. The allowlist in
@@ -49,9 +51,9 @@ not lint cleanly. `report` is read-only.
   `--redact`, because their finding IDs need the real secret hash.
 - **Scan and capture** runs the pinned scanners (Trivy 0.74.0, gitleaks 8.30.1,
   Checkov 3.3.20) on `sample-app/`. Pull requests get a dry-run preview artifact.
-  A push to `main` commits new raw notes as `github-actions[bot]`. Branch
-  protection must allow that push. If it does not, the job fails, and the next
-  run recomputes the same findings.
+  A push to `main` commits new raw notes as `github-actions[bot]`. The ruleset on
+  `main` blocks only force-push and deletion, so that push is allowed. If a push is
+  ever rejected, the job fails, and the next run recomputes the same findings.
 - **Maintenance report** runs weekly and publishes a summary only.
 - Third-party actions are pinned to full commit SHAs, with the release in a
   trailing comment. Dependabot opens weekly pull requests to update them, and a

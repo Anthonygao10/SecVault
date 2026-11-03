@@ -46,7 +46,7 @@ Approved drafts enter `wiki/` only through the apply workflow.
 
 ## Automated capture and checks (CI)
 
-- `ci` and `secrets` are the required pull request checks. `ci` runs Ruff,
+- `ci` and `secrets` are the pull request checks. Require them before merging. This repository does not enforce them yet, because its capture bot pushes to `main` directly. `ci` runs Ruff,
   pytest, and `wiki_tool lint`. `secrets` runs gitleaks over the full git
   history, with the allowlist in `.github/gitleaks-gate.toml`. Neither check
   calls a model.

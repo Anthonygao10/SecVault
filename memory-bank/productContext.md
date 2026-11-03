@@ -26,4 +26,4 @@ Source, Vulnerability (severity, CWE/OWASP, component, status, append-only `stat
 Scan finds a vulnerability -> raw entry created -> agent drafts a record -> human approves -> lint passes -> a later coding session recalls the finding.
 
 ## Privacy stance
-Local-first (Ollama) by default. Unfixed vulnerability records are sensitive and never sent to hosted models unless the user opts in. Repo private by default.
+Local-first (Ollama) by default. Unfixed vulnerability records are sensitive and never sent to hosted models unless the user opts in. Repo private by default; this portfolio copy is public, by choice (2026-11-03).

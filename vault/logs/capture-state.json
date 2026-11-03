@@ -1,0 +1,329 @@
+{
+  "findings": {
+    "034eee5f5f7f": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv2-aws-40-034eee5f5f7f.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV2_AWS_40",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "08a89e1bb288": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-288-08a89e1bb288.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_288",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "08ca0b53a843": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-54-08ca0b53a843.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_54",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "08ed61665a54": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-63-08ed61665a54.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_63",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "0f8042162a43": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0090-0f8042162a43.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0090",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "101aad4318ba": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0086-101aad4318ba.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0086",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "192578753d47": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0107-192578753d47.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0107",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "281ae4881252": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0089-281ae4881252.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0089",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "2e75e1f703c3": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-56-2e75e1f703c3.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_56",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "319c483d3249": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-260-319c483d3249.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_260",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "34fb4dffba3f": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-18-34fb4dffba3f.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_18",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "3c0c911d773e": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv2-aws-62-3c0c911d773e.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV2_AWS_62",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "3c33ee6d29da": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv2-aws-5-3c33ee6d29da.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV2_AWS_5",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "3c9b2e8948ad": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0132-3c9b2e8948ad.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0132",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "41388d833835": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv2-aws-6-41388d833835.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV2_AWS_6",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "47557ffbabfe": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-70-47557ffbabfe.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_70",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "5490f72b5b06": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-gitleaks-generic-api-key-5490f72b5b06.md",
+      "path": "sample-app/app.py",
+      "rule_id": "generic-api-key",
+      "scanner": "gitleaks",
+      "status": "open"
+    },
+    "554fc9ab538a": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-144-554fc9ab538a.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_144",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "79ba46bd6472": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-62-79ba46bd6472.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_62",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "7a08027ed936": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-287-7a08027ed936.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_287",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "7a786d893def": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-355-7a786d893def.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_355",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "81a55320a784": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0091-81a55320a784.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0091",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "820ff1ccae10": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-289-820ff1ccae10.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_289",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "87934ceac0a3": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-21-87934ceac0a3.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_21",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "884ea99d994b": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0093-884ea99d994b.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0093",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "9602187eb851": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-24-9602187eb851.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_24",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "aec2be07dcad": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-286-aec2be07dcad.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_286",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "b5eeefe72d7a": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-55-b5eeefe72d7a.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_55",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "ca3e500daed1": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0087-ca3e500daed1.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0087",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "d5ddb12d71cc": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-23-d5ddb12d71cc.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_23",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "dbf1e061353d": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-290-dbf1e061353d.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_290",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "dfaedc878e0b": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv2-aws-61-dfaedc878e0b.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV2_AWS_61",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "e1527d3ee9c6": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-25-e1527d3ee9c6.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_25",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "eddafe884200": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-53-eddafe884200.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_53",
+      "scanner": "checkov",
+      "status": "open"
+    },
+    "ef2bc6572d48": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-trivy-aws-0124-ef2bc6572d48.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "AWS-0124",
+      "scanner": "trivy",
+      "status": "open"
+    },
+    "f29ff030c868": {
+      "first_seen": "2026-11-03",
+      "last_seen": "2026-11-03",
+      "note": "raw/sources/source-2026-11-03-checkov-ckv-aws-145-f29ff030c868.md",
+      "path": "sample-app/main.tf",
+      "rule_id": "CKV_AWS_145",
+      "scanner": "checkov",
+      "status": "open"
+    }
+  },
+  "version": 1
+}

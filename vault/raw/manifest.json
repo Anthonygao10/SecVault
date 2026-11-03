@@ -20,6 +20,186 @@
       "processed": true,
       "sha256": "dad8d862e243d0c05f25fe326232d9f08ff0a73d5f9484d62c108a31b8ca08fd",
       "size": 1275
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-144-554fc9ab538a.md": {
+      "processed": false,
+      "sha256": "13909b773448795a33c13c67d927f55b885f8324a48e48fa0dfc01c1d464de80",
+      "size": 895
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-145-f29ff030c868.md": {
+      "processed": false,
+      "sha256": "8b91659641939b2f1c7e3711493cf3423c8db421f1dc5d7317a667301c0cebe9",
+      "size": 889
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-18-34fb4dffba3f.md": {
+      "processed": false,
+      "sha256": "dcaf5cb1e3bae58961acd0d16d9b0cc6ae125d51291c075215521d85262ffcbd",
+      "size": 823
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-21-87934ceac0a3.md": {
+      "processed": false,
+      "sha256": "284e9827334f9fb52a398d66c6f565931d9389c8b9fe00f27fb0ec79e213f14b",
+      "size": 858
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-23-d5ddb12d71cc.md": {
+      "processed": false,
+      "sha256": "b7c7c1830d233ef2d55554becca58a3042d38e089c22d9a617c4ba1e91d90bcf",
+      "size": 845
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-24-9602187eb851.md": {
+      "processed": false,
+      "sha256": "1de164f83ef1eb399516937fccc4951f019cca25e176424f6c65f51a918c2aad",
+      "size": 880
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-25-e1527d3ee9c6.md": {
+      "processed": false,
+      "sha256": "f9dba750a26454b18e74b86e03eec9d4668f3753c51a77dda7af07f12db52ddf",
+      "size": 870
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-260-319c483d3249.md": {
+      "processed": false,
+      "sha256": "e6fac371002a38287942fe8557f006160bcff78df4ecd67ce1431ee6c054f218",
+      "size": 926
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-286-aec2be07dcad.md": {
+      "processed": false,
+      "sha256": "8c66f2c31763749f43aa3c38d66347fc21fc1c89f765a8c308410829c7a0db12",
+      "size": 849
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-287-7a08027ed936.md": {
+      "processed": false,
+      "sha256": "8ee8d05fc6acbbd18f45b99e9b30f5bcb54cca136eeee6c41687b7c183f6b4ce",
+      "size": 849
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-288-08a89e1bb288.md": {
+      "processed": false,
+      "sha256": "4900020f1afed454235a929ac60b1daf827cc3b47aa74d7fadd4c89b90c7acd1",
+      "size": 843
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-289-820ff1ccae10.md": {
+      "processed": false,
+      "sha256": "f89038e438fa5a9023c3530b59ea0c0e3cd38b79eaefe016ce3487b2025185eb",
+      "size": 933
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-290-dbf1e061353d.md": {
+      "processed": false,
+      "sha256": "f5992f9702a306a6d0fa30c26d66c779582e55eaa2d161ed1ce83508288c98d7",
+      "size": 873
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-355-7a786d893def.md": {
+      "processed": false,
+      "sha256": "9fc93900e6abc3858f95da090748dfd92450418ba7935d484e33b10c65a6b559",
+      "size": 927
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-53-eddafe884200.md": {
+      "processed": false,
+      "sha256": "164155003d08f9b5deca476b9c1a6eac39a33af00616ce2d9cd1b7b6a7bc824b",
+      "size": 833
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-54-08ca0b53a843.md": {
+      "processed": false,
+      "sha256": "d0edb689b4643a9b75d757f20fc03ca3a913210a83edb13d5cd3ae8533fab387",
+      "size": 837
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-55-b5eeefe72d7a.md": {
+      "processed": false,
+      "sha256": "3ab924ab244194fdbf905b16fa7520460eb2aca4d1b28b2b9acf65517f178b09",
+      "size": 835
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-56-2e75e1f703c3.md": {
+      "processed": false,
+      "sha256": "40a3c70fc7ade02f32860b73740b91291e43869f33bb5f254eb37e9b2bf4e2b6",
+      "size": 849
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-62-79ba46bd6472.md": {
+      "processed": false,
+      "sha256": "5220c1a2b12a8791268ba78217ae4daa006177d3a94687a3c4d8910e5fa7c9d0",
+      "size": 907
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-63-08ed61665a54.md": {
+      "processed": false,
+      "sha256": "47e5c6a166ed80d9c42dac10c1cac05f789b1f3b9a51552fa4f59dab263c77a5",
+      "size": 868
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv-aws-70-47557ffbabfe.md": {
+      "processed": false,
+      "sha256": "0c23a5a344f765bf863057044c3073ff84355b43c41645e5e3a4518d77fb3e8f",
+      "size": 848
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv2-aws-40-034eee5f5f7f.md": {
+      "processed": false,
+      "sha256": "fcaf85ee9bc5c8b00ede66ecafa532517913533a7f3e9f753c4ade335f22ec73",
+      "size": 852
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv2-aws-5-3c33ee6d29da.md": {
+      "processed": false,
+      "sha256": "c4d8d07d81663f66022e8a9a53b4b5a19556cae28541a49ad141f1e2b16bb2f1",
+      "size": 936
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv2-aws-6-41388d833835.md": {
+      "processed": false,
+      "sha256": "66737a02601194f3ab77f861271ddc656b7c6406abfdcfb552cd9bde27047d2f",
+      "size": 918
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv2-aws-61-dfaedc878e0b.md": {
+      "processed": false,
+      "sha256": "a76fcf6deba1b57b5e6ac87d0eb8c49e65c1d12fd437872fd4a69f4f69025e61",
+      "size": 840
+    },
+    "raw/sources/source-2026-11-03-checkov-ckv2-aws-62-3c0c911d773e.md": {
+      "processed": false,
+      "sha256": "8693bfcdb2562952f8211ef64a3e5a6594c30a6c7079696a1bce87a7fcef9dc3",
+      "size": 846
+    },
+    "raw/sources/source-2026-11-03-gitleaks-generic-api-key-5490f72b5b06.md": {
+      "processed": false,
+      "sha256": "a1f3b7ca9828792b80a6027576fdc62c8e83e66384ee4210c75dfe51b4b17a46",
+      "size": 873
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0086-101aad4318ba.md": {
+      "processed": false,
+      "sha256": "1aa997cfb45cca75869c0fb14f04b87bb39aff50f2350580af2d509dc964884e",
+      "size": 879
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0087-ca3e500daed1.md": {
+      "processed": false,
+      "sha256": "5eb7bc68cbaa9a9d881b612f2d4f247752cbbc1aa6e2b5959d02e1f20935b386",
+      "size": 883
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0089-281ae4881252.md": {
+      "processed": false,
+      "sha256": "650308148b12b1e298cb19c42b6c085fbaff4b44b874c25418245ec9387a9c2f",
+      "size": 798
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0090-0f8042162a43.md": {
+      "processed": false,
+      "sha256": "066692f0be08e403654f9dcb6bc6a75ec86e6f11be775729f29205a0bff1722b",
+      "size": 854
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0091-81a55320a784.md": {
+      "processed": false,
+      "sha256": "372fe4c23e0da75b1b5136b769062458269a16d196e8f4f6a41fbadd59b33661",
+      "size": 884
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0093-884ea99d994b.md": {
+      "processed": false,
+      "sha256": "2f918ea2147884e3655302ba95eadbcb2107594daab324a3f3aca09e2663cd32",
+      "size": 957
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0107-192578753d47.md": {
+      "processed": false,
+      "sha256": "92a74bb5a096ded3981a5b1b83ab8d6f95a2d22dcfdb1d65ec4c660c5a65d2c0",
+      "size": 958
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0124-ef2bc6572d48.md": {
+      "processed": false,
+      "sha256": "7cba02d72ae5ac17357177fdcaf6d4c1f9148ffe27f909b70756286161a71040",
+      "size": 862
+    },
+    "raw/sources/source-2026-11-03-trivy-aws-0132-3c9b2e8948ad.md": {
+      "processed": false,
+      "sha256": "8dd4be6763443a44fd74d1d6bad2a845ec999138cae7c7498ae2cfd58194f300",
+      "size": 872
     }
   },
   "removed": [],

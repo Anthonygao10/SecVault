@@ -125,6 +125,1086 @@
       "type": "source"
     },
     {
+      "body": "# Checkov CKV_AWS_144: Ensure that S3 bucket has cross-region replication enabled\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_144`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-s3-bucket-has-cross-region-replication-enabled",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "554fc9ab538a",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_144: Ensure that S3 bucket has cross-region replication enabled",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-144-554fc9ab538a.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_144: Ensure that S3 bucket has cross-region replication enabled",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_145: Ensure that S3 buckets are encrypted with KMS by default\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_145`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-s3-buckets-are-encrypted-with-kms-by-default",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "f29ff030c868",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_145: Ensure that S3 buckets are encrypted with KMS by default",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-145-f29ff030c868.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_145: Ensure that S3 buckets are encrypted with KMS by default",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_18: Ensure the S3 bucket has access logging enabled\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_18`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/s3-policies/s3-13-enable-logging",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "34fb4dffba3f",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_18: Ensure the S3 bucket has access logging enabled",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-18-34fb4dffba3f.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_18: Ensure the S3 bucket has access logging enabled",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_21: Ensure all data stored in the S3 bucket have versioning enabled\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_21`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/s3-policies/s3-16-enable-versioning",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "87934ceac0a3",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_21: Ensure all data stored in the S3 bucket have versioning enabled",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-21-87934ceac0a3.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_21: Ensure all data stored in the S3 bucket have versioning enabled",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_23: Ensure every security group and rule has a description\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_23`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 59\n- Resource: `aws_security_group.open_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "d5ddb12d71cc",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_23: Ensure every security group and rule has a description",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-23-d5ddb12d71cc.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_23: Ensure every security group and rule has a description",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_24: Ensure no security groups allow ingress from 0.0.0.0:0 to port 22\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_24`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 59\n- Resource: `aws_security_group.open_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-1-port-security",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "9602187eb851",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_24: Ensure no security groups allow ingress from 0.0.0.0:0 to port 22",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-24-9602187eb851.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_24: Ensure no security groups allow ingress from 0.0.0.0:0 to port 22",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_25: Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_25`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 59\n- Resource: `aws_security_group.open_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-2",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "e1527d3ee9c6",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_25: Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-25-e1527d3ee9c6.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_25: Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_260: Ensure no security groups allow ingress from 0.0.0.0:0 to port 80\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_260`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 59\n- Resource: `aws_security_group.open_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-groups-do-not-allow-ingress-from-00000-to-port-80",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "319c483d3249",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_260: Ensure no security groups allow ingress from 0.0.0.0:0 to port 80",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-260-319c483d3249.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_260: Ensure no security groups allow ingress from 0.0.0.0:0 to port 80",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_286: Ensure IAM policies does not allow privilege escalation\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_286`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-286",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "aec2be07dcad",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_286: Ensure IAM policies does not allow privilege escalation",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-286-aec2be07dcad.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_286: Ensure IAM policies does not allow privilege escalation",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_287: Ensure IAM policies does not allow credentials exposure\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_287`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-287",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "7a08027ed936",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_287: Ensure IAM policies does not allow credentials exposure",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-287-7a08027ed936.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_287: Ensure IAM policies does not allow credentials exposure",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_288: Ensure IAM policies does not allow data exfiltration\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_288`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-288",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "08a89e1bb288",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_288: Ensure IAM policies does not allow data exfiltration",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-288-08a89e1bb288.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_288: Ensure IAM policies does not allow data exfiltration",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_289: Ensure IAM policies does not allow permissions management / resource exposure without constraints\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_289`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-289",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "820ff1ccae10",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_289: Ensure IAM policies does not allow permissions management / resource exposure without constraints",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-289-820ff1ccae10.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_289: Ensure IAM policies does not allow permissions management / resource exposure without constraints",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_290: Ensure IAM policies does not allow write access without constraints\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_290`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-290",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "dbf1e061353d",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_290: Ensure IAM policies does not allow write access without constraints",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-290-dbf1e061353d.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_290: Ensure IAM policies does not allow write access without constraints",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_355: Ensure no IAM policies documents allow \"*\" as a statement's resource for restrictable actions\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_355`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-355",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "7a786d893def",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_355: Ensure no IAM policies documents allow \"*\" as a statement's resource for restrictable actions",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-355-7a786d893def.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_355: Ensure no IAM policies documents allow \"*\" as a statement's resource for restrictable actions",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_53: Ensure S3 bucket has block public ACLS enabled\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_53`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 22\n- Resource: `aws_s3_bucket_public_access_block.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/s3-policies/bc-aws-s3-19",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "eddafe884200",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_53: Ensure S3 bucket has block public ACLS enabled",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-53-eddafe884200.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_53: Ensure S3 bucket has block public ACLS enabled",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_54: Ensure S3 bucket has block public policy enabled\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_54`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 22\n- Resource: `aws_s3_bucket_public_access_block.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/s3-policies/bc-aws-s3-20",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "08ca0b53a843",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_54: Ensure S3 bucket has block public policy enabled",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-54-08ca0b53a843.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_54: Ensure S3 bucket has block public policy enabled",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_55: Ensure S3 bucket has ignore public ACLs enabled\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_55`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 22\n- Resource: `aws_s3_bucket_public_access_block.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/s3-policies/bc-aws-s3-21",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "b5eeefe72d7a",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_55: Ensure S3 bucket has ignore public ACLs enabled",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-55-b5eeefe72d7a.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_55: Ensure S3 bucket has ignore public ACLs enabled",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_56: Ensure S3 bucket has 'restrict_public_buckets' enabled\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_56`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 22\n- Resource: `aws_s3_bucket_public_access_block.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/s3-policies/bc-aws-s3-22",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "2e75e1f703c3",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_56: Ensure S3 bucket has 'restrict_public_buckets' enabled",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-56-2e75e1f703c3.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_56: Ensure S3 bucket has 'restrict_public_buckets' enabled",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_62: Ensure IAM policies that allow full \"*-*\" administrative privileges are not created\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_62`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-iam-45",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "79ba46bd6472",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_62: Ensure IAM policies that allow full \"*-*\" administrative privileges are not created",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-62-79ba46bd6472.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_62: Ensure IAM policies that allow full \"*-*\" administrative privileges are not created",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_63: Ensure no IAM policies documents allow \"*\" as a statement's actions\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_63`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/iam-48",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "08ed61665a54",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_63: Ensure no IAM policies documents allow \"*\" as a statement's actions",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-63-08ed61665a54.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_63: Ensure no IAM policies documents allow \"*\" as a statement's actions",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV_AWS_70: Ensure S3 bucket does not allow an action with any Principal\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV_AWS_70`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 31\n- Resource: `aws_s3_bucket_policy.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/s3-policies/bc-aws-s3-23",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "47557ffbabfe",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV_AWS_70: Ensure S3 bucket does not allow an action with any Principal",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv-aws-70-47557ffbabfe.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV_AWS_70: Ensure S3 bucket does not allow an action with any Principal",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV2_AWS_40: Ensure AWS IAM policy does not allow full IAM privileges\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV2_AWS_40`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 46\n- Resource: `aws_iam_policy.overly_permissive_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/bc-aws-2-40",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "034eee5f5f7f",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV2_AWS_40: Ensure AWS IAM policy does not allow full IAM privileges",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv2-aws-40-034eee5f5f7f.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV2_AWS_40: Ensure AWS IAM policy does not allow full IAM privileges",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV2_AWS_5: Ensure that Security Groups are attached to another resource\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV2_AWS_5`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 59\n- Resource: `aws_security_group.open_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-that-security-groups-are-attached-to-ec2-instances-or-elastic-network-interfaces-enis",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "3c33ee6d29da",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV2_AWS_5: Ensure that Security Groups are attached to another resource",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv2-aws-5-3c33ee6d29da.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV2_AWS_5: Ensure that Security Groups are attached to another resource",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV2_AWS_6: Ensure that S3 bucket has a Public Access block\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV2_AWS_6`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/s3-bucket-should-have-public-access-blocks-defaults-to-false-if-the-public-access-block-is-not-attached",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "41388d833835",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV2_AWS_6: Ensure that S3 bucket has a Public Access block",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv2-aws-6-41388d833835.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV2_AWS_6: Ensure that S3 bucket has a Public Access block",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV2_AWS_61: Ensure that an S3 bucket has a lifecycle configuration\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV2_AWS_61`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/bc-aws-2-61",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "dfaedc878e0b",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV2_AWS_61: Ensure that an S3 bucket has a lifecycle configuration",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv2-aws-61-dfaedc878e0b.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV2_AWS_61: Ensure that an S3 bucket has a lifecycle configuration",
+      "type": "source"
+    },
+    {
+      "body": "# Checkov CKV2_AWS_62: Ensure S3 buckets should have event notifications enabled\n\nCapture mode: normalized and redacted Checkov output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Checkov\n- Rule: `CKV2_AWS_62`\n- Severity: not reported\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Reference\n\nhttps://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/bc-aws-2-62",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "3c0c911d773e",
+        "processed": false,
+        "scanner": "checkov",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Checkov CKV2_AWS_62: Ensure S3 buckets should have event notifications enabled",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-checkov-ckv2-aws-62-3c0c911d773e.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Checkov CKV2_AWS_62: Ensure S3 buckets should have event notifications enabled",
+      "type": "source"
+    },
+    {
+      "body": "# gitleaks generic-api-key in sample-app/app.py\n\nCapture mode: normalized and redacted gitleaks output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: gitleaks\n- Rule: `generic-api-key`\n- Severity: not reported\n- Location: `sample-app/app.py` line 15\n- Secret value: `[REDACTED]` (omitted by design)\n- Revision: `18dfb07b42b9`\n\n## Description\n\nDetected a Generic API Key, potentially exposing access to various services and sensitive operations.\n\n## Recommended action\n\nRotate the exposed credential and remove it from the code history.",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "5490f72b5b06",
+        "processed": false,
+        "scanner": "gitleaks",
+        "sources": [],
+        "tags": [
+          "source",
+          "secrets-management"
+        ],
+        "title": "gitleaks generic-api-key in sample-app/app.py",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-gitleaks-generic-api-key-5490f72b5b06.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "secrets-management"
+      ],
+      "title": "gitleaks generic-api-key in sample-app/app.py",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0086: S3 Access block should block public ACL\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0086`\n- Severity: HIGH\n- Location: `sample-app/main.tf` line 25\n- Resource: `aws_s3_bucket_public_access_block.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nPublic access block does not block public ACLs\n\n## Recommended action\n\nEnable blocking any PUT calls with a public ACL specified\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0086",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "101aad4318ba",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0086: S3 Access block should block public ACL",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0086-101aad4318ba.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0086: S3 Access block should block public ACL",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0087: S3 Access block should block public policy\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0087`\n- Severity: HIGH\n- Location: `sample-app/main.tf` line 26\n- Resource: `aws_s3_bucket_public_access_block.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nPublic access block does not block public policies\n\n## Recommended action\n\nPrevent policies that allow public access being PUT\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0087",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "ca3e500daed1",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0087: S3 Access block should block public policy",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0087-ca3e500daed1.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0087: S3 Access block should block public policy",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0089: S3 Bucket Logging\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0089`\n- Severity: LOW\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nBucket has logging disabled\n\n## Recommended action\n\nAdd a logging block to the resource to enable access logging\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0089",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "281ae4881252",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0089: S3 Bucket Logging",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0089-281ae4881252.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0089: S3 Bucket Logging",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0090: S3 Data should be versioned\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0090`\n- Severity: MEDIUM\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nBucket does not have versioning enabled\n\n## Recommended action\n\nEnable versioning to protect against accidental/malicious removal or modification\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0090",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "0f8042162a43",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0090: S3 Data should be versioned",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0090-0f8042162a43.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0090: S3 Data should be versioned",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0091: S3 Access Block should Ignore Public ACL\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0091`\n- Severity: HIGH\n- Location: `sample-app/main.tf` line 27\n- Resource: `aws_s3_bucket_public_access_block.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nPublic access block does not ignore public ACLs\n\n## Recommended action\n\nEnable ignoring the application of public ACLs in PUT calls\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0091",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "81a55320a784",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0091: S3 Access Block should Ignore Public ACL",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0091-81a55320a784.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0091: S3 Access Block should Ignore Public ACL",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0093: S3 Access block should restrict public bucket to limit access\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0093`\n- Severity: HIGH\n- Location: `sample-app/main.tf` line 28\n- Resource: `aws_s3_bucket_public_access_block.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nPublic access block does not restrict public buckets\n\n## Recommended action\n\nLimit the access to public buckets to only the owner or AWS Services (eg; CloudFront)\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0093",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "884ea99d994b",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0093: S3 Access block should restrict public bucket to limit access",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0093-884ea99d994b.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0093: S3 Access block should restrict public bucket to limit access",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0107: Security groups should not allow unrestricted ingress to SSH or RDP from any IP address.\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0107`\n- Severity: HIGH\n- Location: `sample-app/main.tf` line 67\n- Resource: `aws_security_group.open_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nSecurity group rule allows unrestricted ingress from any IP address.\n\n## Recommended action\n\nSet a more restrictive CIDR range\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0107",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "192578753d47",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0107: Security groups should not allow unrestricted ingress to SSH or RDP from any IP address.",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0107-192578753d47.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0107: Security groups should not allow unrestricted ingress to SSH or RDP from any IP address.",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0124: Missing description for security group rule.\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0124`\n- Severity: LOW\n- Location: `sample-app/main.tf` line 63\n- Resource: `aws_security_group.open_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nSecurity group rule does not have a description.\n\n## Recommended action\n\nAdd descriptions for all security groups rules\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0124",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "ef2bc6572d48",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0124: Missing description for security group rule.",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0124-ef2bc6572d48.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0124: Missing description for security group rule.",
+      "type": "source"
+    },
+    {
+      "body": "# Trivy AWS-0132: S3 encryption should use Customer Managed Keys\n\nCapture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.\nRaw evidence: do not edit. Interpretation belongs in a proposed wiki note.\n\n## Finding\n\n- Scanner: Trivy\n- Rule: `AWS-0132`\n- Severity: HIGH\n- Location: `sample-app/main.tf` line 18\n- Resource: `aws_s3_bucket.public_demo`\n- Revision: `18dfb07b42b9`\n\n## Description\n\nBucket does not encrypt data with a customer managed key.\n\n## Recommended action\n\nUse SSE-KMS with a customer managed key (CMK)\n\n## Reference\n\nhttps://avd.aquasec.com/misconfig/aws-0132",
+      "front_matter": {
+        "captured": "2026-11-03",
+        "created": "2026-11-03",
+        "finding_id": "3c9b2e8948ad",
+        "processed": false,
+        "scanner": "trivy",
+        "sources": [],
+        "tags": [
+          "source",
+          "infrastructure-as-code"
+        ],
+        "title": "Trivy AWS-0132: S3 encryption should use Customer Managed Keys",
+        "type": "source",
+        "updated": "2026-11-03"
+      },
+      "links": [],
+      "parse_error": null,
+      "path": "raw/sources/source-2026-11-03-trivy-aws-0132-3c9b2e8948ad.md",
+      "severity": null,
+      "sources": [],
+      "status": null,
+      "tags": [
+        "source",
+        "infrastructure-as-code"
+      ],
+      "title": "Trivy AWS-0132: S3 encryption should use Customer Managed Keys",
+      "type": "source"
+    },
+    {
       "body": "# Input validation\n\nInput validation constrains untrusted values before they reach a query,\ninterpreter, renderer, or other security-sensitive operation. It complements\nparameterized queries and output encoding; it does not replace them.",
       "front_matter": {
         "created": "2026-09-30",

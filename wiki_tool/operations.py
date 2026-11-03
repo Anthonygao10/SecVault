@@ -368,7 +368,18 @@ def build_catalog(vault: str | Path) -> dict[str, Any]:
     return catalog
 
 
+TEXT_SUFFIXES = {".md", ".json", ".txt", ".yaml", ".yml"}
+
+
 def _sha256(path: Path) -> str:
+    """Hash a file; text files are hashed with LF endings so checkouts agree.
+
+    Git on Windows may rewrite line endings on checkout. Normalizing CRLF to LF
+    keeps manifest hashes stable across operating systems without hiding any
+    other content change.
+    """
+    if path.suffix.lower() in TEXT_SUFFIXES:
+        return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
     digest = hashlib.sha256()
     with path.open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
@@ -394,25 +405,28 @@ def update_manifest(vault: str | Path) -> dict[str, Any]:
     files: dict[str, Any] = {}
     cited_sources = _cited_raw_sources(root)
 
+    changed: list[str] = []
     for path in _iter_files(root / "raw"):
         relative = relative_path(root, path)
         if relative == "raw/manifest.json" or path.name == ".gitkeep":
             continue
-        processed = path.resolve() in cited_sources
-        files[relative] = {
-            "sha256": _sha256(path),
-            "size": path.stat().st_size,
-            "processed": processed,
-        }
+        digest = _sha256(path)
+        previous_record = previous_files.get(relative)
+        if previous_record is not None and previous_record.get("sha256") not in (None, digest):
+            # Raw evidence is immutable: never re-bless a modified file. Keep the
+            # recorded hash and size so `lint` keeps failing until the change is reverted.
+            changed.append(relative)
+            record = dict(previous_record)
+        else:
+            record = {"sha256": digest, "size": path.stat().st_size}
+        record["processed"] = path.resolve() in cited_sources
+        files[relative] = record
 
-    previous_keys = set(previous_files)
-    current_keys = set(files)
-    changed = sorted(
-        relative
-        for relative in current_keys & previous_keys
-        if files[relative]["sha256"] != previous_files[relative].get("sha256")
-    )
-    removed = sorted(previous_keys - current_keys)
+    changed.sort()
+    removed = sorted(set(previous_files) - set(files))
+    for relative in removed:
+        # Keep the record of a deleted file so `lint` reports the missing evidence.
+        files[relative] = previous_files[relative]
     manifest = {
         "version": 1,
         "files": files,
@@ -458,9 +472,9 @@ def _manifest_errors(root: Path) -> list[str]:
         for path in _iter_files(root / "raw")
         if path.name != ".gitkeep" and relative_path(root, path) != "raw/manifest.json"
     ]
-    if not raw_files:
-        return []
     if not manifest_path.exists():
+        if not raw_files:
+            return []
         return ["raw manifest is missing; run `wiki_tool manifest`"]
 
     manifest = _load_json(manifest_path, {})

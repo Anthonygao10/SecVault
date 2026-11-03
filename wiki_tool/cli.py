@@ -136,4 +136,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
     if args.command == "audit" and isinstance(result, dict) and result.get("status") != "passed":
         return 1
+    if (
+        args.command == "manifest"
+        and isinstance(result, dict)
+        and (result.get("changed") or result.get("removed"))
+    ):
+        print("wiki-tool: raw evidence was modified or removed", file=sys.stderr)
+        return 1
     return 0

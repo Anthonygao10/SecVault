@@ -1,0 +1,5 @@
+# Keep line endings identical on every checkout so raw-source hashes are stable.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary

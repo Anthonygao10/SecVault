@@ -172,3 +172,21 @@ def test_capture_scan_never_uses_the_gate_config() -> None:
     ]
     assert any("gitleaks dir" in line for line in commands)
     assert not any("--config" in line for line in commands)
+
+
+def test_venvs_never_join_the_job_path() -> None:
+    # GITHUB_PATH reaches every later step in the job. A venv bin there would shadow
+    # setup-python's python, which runs pytest and wiki_tool after the scanners.
+    for path in ACTION_FILES:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if "GITHUB_PATH" in line and not line.lstrip().startswith("#"):
+                assert "venv" not in line, f"{path.name}: {line.strip()}"
+
+
+def test_checkov_runs_by_path_from_its_venv() -> None:
+    commands = [
+        line
+        for line in SCAN_ACTION.read_text(encoding="utf-8").splitlines()
+        if not line.lstrip().startswith("#")
+    ]
+    assert any('"$RUNNER_TEMP/checkov-venv/bin/checkov"' in line for line in commands)

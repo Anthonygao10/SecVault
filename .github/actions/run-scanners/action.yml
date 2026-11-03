@@ -36,8 +36,10 @@ runs:
         python3 -m venv "$RUNNER_TEMP/checkov-venv"
         "$RUNNER_TEMP/checkov-venv/bin/python" -m pip install --quiet "checkov==${CHECKOV_VERSION}"
 
+        # Only the scanner binaries join PATH. A GITHUB_PATH entry reaches every later
+        # step, so Checkov is called by path below. Putting its venv bin on PATH would
+        # shadow setup-python's python, which runs pytest and wiki_tool in the capture job.
         echo "$bin" >> "$GITHUB_PATH"
-        echo "$RUNNER_TEMP/checkov-venv/bin" >> "$GITHUB_PATH"
 
     - name: Install pinned gitleaks
       uses: ./.github/actions/install-gitleaks
@@ -53,8 +55,8 @@ runs:
 
         # Findings do not fail these commands. Capture decides what becomes evidence.
         trivy config --format json --output "$out/trivy.json" "$SCAN_TARGET"
-        checkov -d "$SCAN_TARGET" --framework terraform -o json --soft-fail \
-          --output-file-path "$out/checkov"
+        "$RUNNER_TEMP/checkov-venv/bin/checkov" -d "$SCAN_TARGET" --framework terraform \
+          -o json --soft-fail --output-file-path "$out/checkov"
         mv "$out/checkov/results_json.json" "$out/checkov.json"
         # Do not add --redact here. Capture derives each finding ID from a hash of the
         # secret, so redacted values would give every leak in a file the same identity.

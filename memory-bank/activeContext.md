@@ -1,17 +1,17 @@
 # Active Context
 
-_Last updated: 2026-11-03_
+_Last updated: 2026-11-04_
 
 ## Current focus
 
-The PRD is at v0.6. Phases 1 through 5 are complete. Phase 6 (the review loop) is implemented, verified, and drilled on 2026-11-03. The phase commit is the last step.
+The PRD is at v0.6. Phases 1 through 5 are complete. Phase 6 (the review loop) is implemented, verified, drilled on 2026-11-03, and pushed to `origin/main` as `92ed8a6` on 2026-11-04. Hosted CI passed, including the two symlink tests on Ubuntu (163 passed, none skipped).
 The build-time memory bank and Cursor rules are assistant context;
 the portable product entry point is `AGENTS.md`, with product skills under
 `.agents/skills/`.
 
 ## Immediate next steps
 
-1. Commit Phase 6 on `main` without pushing (verification passed; see `progress.md`).
+1. Done: Phase 6 is pushed (`92ed8a6`), and the hosted runs are green. The capture bot then pushed `31dafc0` (`last_seen` dates only).
 2. Drill result recorded: no protected writes, but one draft quoted a canary. Decide later whether the drill needs a stricter rule for quoted text.
 3. Start Phase 7 (Ollama).
 4. Keep hosted CI free of LLM drafting; drafting remains local and reviewed.

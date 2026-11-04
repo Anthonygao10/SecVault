@@ -20,7 +20,10 @@ intentionally independent of any particular coding agent.
 - Never modify or overwrite raw evidence.
 - Write agent drafts to `vault/proposed/`; do not write directly to
   `vault/wiki/`.
-- Do not apply a draft without explicit human approval.
+- Do not apply a draft without a human approval recorded for its exact bytes.
+  Agents may list and review drafts. `approve`, `reject`, and `apply` are human
+  decisions: never run them on your own initiative. `approve` needs an
+  interactive terminal and a typed short hash.
 - Use the schema, templates, approved tags, and Obsidian `[[wiki-links]]`.
 - Run validation before committing changes.
 

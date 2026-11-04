@@ -152,9 +152,10 @@ This draft documents a parameterized-query remediation.
 """
 
 
-def test_apply_moves_approved_draft_and_audits(good_vault: Path) -> None:
+def test_apply_moves_approved_draft_and_audits(good_vault: Path, approve) -> None:
     draft = good_vault / "proposed" / "vuln-new-finding.md"
     draft.write_text(draft_text("New SQL injection finding", "demo:new"), encoding="utf-8")
+    approve(good_vault, draft)
 
     result = apply_draft(good_vault, draft)
 
@@ -164,9 +165,10 @@ def test_apply_moves_approved_draft_and_audits(good_vault: Path) -> None:
     assert (good_vault / "logs" / "wiki-log.md").exists()
 
 
-def test_apply_refuses_overwrite(good_vault: Path) -> None:
+def test_apply_refuses_overwrite(good_vault: Path, approve) -> None:
     draft = good_vault / "proposed" / "vuln-sql-injection.md"
     draft.write_text(draft_text("Replacement", "demo:replacement"), encoding="utf-8")
+    approve(good_vault, draft)
 
     with pytest.raises(DraftApplyError, match="refusing to overwrite"):
         apply_draft(good_vault, draft)

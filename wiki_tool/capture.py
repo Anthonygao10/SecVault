@@ -34,6 +34,7 @@ from .operations import (
     vault_path,
 )
 from .redact import REDACTED, contains_secret, redact_text
+from .safe_text import inline_text
 
 SCANNER_LABELS = {"trivy": "Trivy", "checkov": "Checkov", "gitleaks": "gitleaks"}
 SCANNER_TAGS = {
@@ -46,6 +47,12 @@ STATE_RELATIVE_PATH = "logs/capture-state.json"
 REVISION_PATTERN = re.compile(r"[0-9A-Za-z._-]{1,64}")
 PREFIX_PATTERN = re.compile(r"[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*")
 GITLEAKS_REMEDIATION = "Rotate the exposed credential and remove it from the code history."
+# A raw note counts as capture evidence only if capture itself would have named it this way.
+CAPTURED_NAME_PATTERN = re.compile(
+    r"source-\d{4}-\d{2}-\d{2}-(?:trivy|checkov|gitleaks)-[a-z0-9-]+-(?P<id>[0-9a-f]{12})\.md"
+)
+_LEADING_MARKUP = re.compile(r"^([#>*+\-=|~`<!\[\]])")
+_ORDERED_MARKER = re.compile(r"^(\d+)([.)])(?=\s|$)")
 
 
 class CaptureError(VaultError):
@@ -111,16 +118,26 @@ def _decode(raw: bytes) -> str:
 
 
 def _identifier(value: object) -> str:
-    """Normalize a rule, path, or resource identifier without rewriting its content."""
+    """Normalize a rule, path, or resource identifier without rewriting its content.
+
+    The result feeds the stable finding identifier, so it must not change. Display
+    code flattens these values with `inline_text` before writing them into notes.
+    """
     return "" if value is None else str(value).strip()
 
 
+def _markdown_safe(text: str) -> str:
+    """Stop scanner prose from starting a heading, list, quote, table, or HTML block."""
+    text = text.replace("%%", "% %").replace("<!--", "&lt;!--")
+    text = _LEADING_MARKUP.sub(lambda match: "\\" + match.group(1), text)
+    return _ORDERED_MARKER.sub(lambda match: f"{match.group(1)}\\{match.group(2)}", text)
+
+
 def _prose(value: object) -> str:
-    """Normalize free text: redact secret-like values, collapse whitespace, defuse wiki links."""
+    """Normalize free text: redact secrets first, then flatten it to one safe line."""
     if value is None:
         return ""
-    text = " ".join(redact_text(str(value)).split())
-    return text.replace("[[", "[ [").replace("]]", "] ]")
+    return _markdown_safe(inline_text(redact_text(str(value))))
 
 
 def _line(value: object) -> int | None:
@@ -262,7 +279,8 @@ PARSERS: dict[str, Callable[[Any, str | None], list[Finding]]] = {
 
 
 def _slug(value: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-") or "finding"
+    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")[:40].strip("-")
+    return slug or "finding"
 
 
 def note_name(finding: Finding, captured: date) -> str:
@@ -274,11 +292,12 @@ def note_name(finding: Finding, captured: date) -> str:
 
 
 def _location(path: str, lines: list[int]) -> str:
+    shown = inline_text(path)
     if not lines:
-        return f"`{path}` (line not reported)"
+        return f"`{shown}` (line not reported)"
     ordered = sorted(lines)
     noun = "line" if len(ordered) == 1 else "lines"
-    return f"`{path}` {noun} {', '.join(str(number) for number in ordered)}"
+    return f"`{shown}` {noun} {', '.join(str(number) for number in ordered)}"
 
 
 def _front_matter(finding: Finding, title: str, captured: date) -> str:
@@ -329,14 +348,14 @@ def render_note(
         "## Finding",
         "",
         f"- Scanner: {label}",
-        f"- Rule: `{finding.rule_id}`",
-        f"- Severity: {finding.severity or 'not reported'}",
+        f"- Rule: `{inline_text(finding.rule_id)}`",
+        f"- Severity: {inline_text(finding.severity) or 'not reported'}",
         f"- Location: {_location(finding.path, lines)}",
     ]
     if finding.scanner == "gitleaks":
         body.append(f"- Secret value: `{REDACTED}` (omitted by design)")
     elif finding.subject:
-        body.append(f"- Resource: `{finding.subject}`")
+        body.append(f"- Resource: `{inline_text(finding.subject)}`")
     if revision:
         body.append(f"- Revision: `{revision}`")
     for heading, text in (
@@ -378,14 +397,22 @@ def save_state(root: Path, state: dict[str, Any]) -> None:
 
 
 def _captured_note_ids(root: Path) -> set[str]:
+    """Identifiers of raw notes that capture itself wrote.
+
+    A note counts only when its file name has the shape capture uses and its front
+    matter agrees with that name. Any other raw note, however it declares a
+    finding_id, cannot suppress capture of a real finding.
+    """
     directory = root / "raw" / "sources"
     if not directory.exists():
         return set()
     identifiers: set[str] = set()
     for path in sorted(directory.rglob("*.md")):
-        finding_id = parse_markdown(path).metadata.get("finding_id")
-        if isinstance(finding_id, str):
-            identifiers.add(finding_id)
+        match = CAPTURED_NAME_PATTERN.fullmatch(path.name)
+        if match is None:
+            continue
+        if parse_markdown(path).metadata.get("finding_id") == match.group("id"):
+            identifiers.add(match.group("id"))
     return identifiers
 
 
@@ -405,7 +432,7 @@ def _normalize_prefix(value: str | None) -> str | None:
     prefix = value.replace("\\", "/").strip("/")
     if prefix in ("", "."):
         return None
-    if not PREFIX_PATTERN.fullmatch(prefix):
+    if not PREFIX_PATTERN.fullmatch(prefix) or ".." in prefix.split("/"):
         raise CaptureError("path prefix must be a relative path without spaces or '..'")
     return prefix
 

@@ -26,6 +26,12 @@ python -m wiki_tool lint --vault vault --json
   --vault vault` only when the capture is intentional and reviewed.
 - Secret-like value: redact through the approved capture process and review
   the Git history; do not paste real credentials into a note.
+- Draft nested below `proposed/`: move it directly into `proposed/`. Review,
+  approval, and apply all refuse nested drafts.
+- Review state unreadable (`logs/review-state.json`): stop. Do not hand-edit the
+  file. Approvals are recorded only by `approve` in an interactive terminal.
+- Link that is rooted, drive-qualified, or contains `..`: links must name a note
+  inside the vault, so rewrite the target as a vault-relative path.
 
 After fixing an allowed file, rerun lint and then the full maintain audit.
 Never weaken a validator to make a note pass.

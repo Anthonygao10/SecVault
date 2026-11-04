@@ -9,9 +9,20 @@ from typing import Any
 
 import pytest
 
-from wiki_tool.capture import CaptureError, capture_findings, normalize_path, stable_finding_id
+from wiki_tool.capture import (
+    CaptureError,
+    Finding,
+    _captured_note_ids,
+    _location,
+    _markdown_safe,
+    capture_findings,
+    normalize_path,
+    render_note,
+    stable_finding_id,
+)
 from wiki_tool.cli import main
-from wiki_tool.operations import lint_vault
+from wiki_tool.operations import lint_vault, parse_note_text
+from wiki_tool.safe_text import inline_text
 
 SCANS = Path(__file__).parent / "fixtures" / "scans"
 DAY = date(2026, 11, 3)
@@ -296,3 +307,99 @@ def test_cli_capture_reports_json_and_refuses_a_tampered_vault(
         "tampered\n", encoding="utf-8"
     )
     assert main(arguments) == 2
+
+
+# --- Hardening of text that scanners control ---------------------------------
+
+BENIGN_BODY = """# Trivy AWS-0086: S3 public access
+
+Capture mode: normalized and redacted Trivy output, written by `wiki_tool capture`.
+Raw evidence: do not edit. Interpretation belongs in a proposed wiki note.
+
+## Finding
+
+- Scanner: Trivy
+- Rule: `AWS-0086`
+- Severity: HIGH
+- Location: `sample-app/main.tf` line 25
+- Resource: `aws_s3_bucket_public_access_block.public_demo`
+
+## Description
+
+Public access is allowed.
+
+## Recommended action
+
+Enable the block.
+
+## Reference
+
+https://example.invalid/AWS-0086"""
+
+
+def test_inline_text_flattens_lines_and_defuses_markup() -> None:
+    assert inline_text("a\n## b `c` [[d]]") == "a ## b 'c' [ [d] ]"
+    assert inline_text("  spaced\t\tout  ") == "spaced out"
+    assert inline_text("bell\x07and\x1b[31m") == "bell and [31m"
+
+
+def test_markdown_safe_neutralises_block_starts() -> None:
+    assert _markdown_safe("# Heading") == "\\# Heading"
+    assert _markdown_safe("- item") == "\\- item"
+    assert _markdown_safe("> quote") == "\\> quote"
+    assert _markdown_safe("| a | b |") == "\\| a | b |"
+    assert _markdown_safe("1. first") == "1\\. first"
+    assert _markdown_safe("<!-- hidden") == "&lt;!-- hidden"
+    assert _markdown_safe("%% hidden %%") == "% % hidden % %"
+    assert _markdown_safe("plain text") == "plain text"
+
+
+def test_location_is_one_code_span_with_sorted_lines() -> None:
+    assert _location("sample-app/main.tf", [25]) == "`sample-app/main.tf` line 25"
+    assert _location("sample-app/main.tf", [30, 25]) == "`sample-app/main.tf` lines 25, 30"
+    assert _location("sample-app/main.tf", []) == "`sample-app/main.tf` (line not reported)"
+    hostile = _location("sample-app/main.tf`\n## Forged", [7])
+    assert hostile == "`sample-app/main.tf' ## Forged` line 7"
+
+
+def test_benign_finding_renders_the_expected_note() -> None:
+    finding = Finding(
+        scanner="trivy",
+        rule_id="AWS-0086",
+        path="sample-app/main.tf",
+        subject="aws_s3_bucket_public_access_block.public_demo",
+        title="S3 public access",
+        severity="HIGH",
+        line=25,
+        description="Public access is allowed.",
+        remediation="Enable the block.",
+        reference="https://example.invalid/AWS-0086",
+    )
+
+    text = render_note(finding, [25], captured=DAY)
+    note = parse_note_text(Path("source.md"), text)
+
+    assert note.error is None
+    assert note.metadata["title"] == "Trivy AWS-0086: S3 public access"
+    assert note.metadata["finding_id"] == finding.finding_id
+    assert note.body.strip() == BENIGN_BODY
+
+
+def test_only_capture_shaped_notes_suppress_capture(good_vault: Path) -> None:
+    raw = good_vault / "raw" / "sources"
+    assert _captured_note_ids(good_vault) == set()
+
+    # A note named the way capture names its output, with a matching identifier.
+    (raw / "source-2026-11-03-trivy-aws-0086-101aad4318ba.md").write_text(
+        '---\nfinding_id: "101aad4318ba"\n---\n', encoding="utf-8"
+    )
+    # A hand-written note that claims the same identifier under another name.
+    (raw / "handwritten-101aad4318ba.md").write_text(
+        '---\nfinding_id: "101aad4318ba"\n---\n', encoding="utf-8"
+    )
+    # A capture-shaped name whose front matter disagrees with the name.
+    (raw / "source-2026-11-03-trivy-aws-0107-aaaaaaaaaaaa.md").write_text(
+        '---\nfinding_id: "bbbbbbbbbbbb"\n---\n', encoding="utf-8"
+    )
+
+    assert _captured_note_ids(good_vault) == {"101aad4318ba"}

@@ -1,0 +1,13 @@
+[
+  {
+    "Description": "Injected rule text\n\n## Forged heading CANARY-GITLEAKS-DESC-0a1b",
+    "StartLine": 3,
+    "EndLine": 3,
+    "StartColumn": 1,
+    "EndColumn": 20,
+    "File": "config\\app.env`\n[[../../outside]]",
+    "RuleID": "generic-api-key`\n- bullet",
+    "Commit": "",
+    "Tags": []
+  }
+]

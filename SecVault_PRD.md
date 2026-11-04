@@ -5,13 +5,14 @@
 | | |
 |---|---|
 | **Author** | [Your name] |
-| **Status** | Draft, v0.5 |
+| **Status** | Draft, v0.6 |
 | **Last updated** | November 3, 2026 |
 | **Target use** | Personal / portfolio project for DevOps and cybersecurity internship applications |
 | **Inspiration** | "How To Build LLM Wiki In Obsidian: A Memory Layer For Any Agentic AI" (YouTube tutorial by Callum / Wander Lutes) |
 
 ### Changelog
 
+- **v0.6:** Phase 6 review loop. People review drafts through `wiki_tool proposed`, `review`, `approve`, and `reject`. `approve` runs only in an interactive terminal, shows the review packet, and requires the reviewer to type the first 12 characters of the draft's SHA-256. There is no `--yes` flag (6.6). Decisions live in `logs/review-state.json` and are bound to the draft's bytes, so an edit after approval makes the approval stale. A rejected draft stays in `proposed/`. `apply` refuses drafts without a current approval, refuses to overwrite unless `--overwrite` is given and the draft's `status_history` extends the existing history, and supports `apply --all-approved` with rollback. Hardening: scanner text is flattened to one line and defused of wiki links and Markdown block syntax; terminal output escapes control and bidirectional characters; links cannot leave the vault; drafts must sit directly inside `proposed/`. The maintenance report gains a drafts section. Prompt-injection fixtures live in `tests/fixtures/injection/`, never in `vault/raw/`, and deterministic tests check them (see the threat model in section 9). Deviation from the plan: `reject` also requires `--reviewer`.
 - **v0.5:** Repo-wide secret gate and action pinning. CI adds a `secrets` check that runs gitleaks over the full git history with `--redact`. Its allowlist (`.github/gitleaks-gate.toml`) skips only `sample-app/`, which holds intentionally fake secrets, and a test pins that list. The capture scan still runs gitleaks without a gate config, so the demo findings stay visible to capture (5.3). Third-party actions are pinned to commit SHAs with their release in a comment, and Dependabot proposes weekly updates (5.3). Scanner archives stay pinned by SHA-256. The repository is public, a visibility choice for this portfolio project made on 2026-11-03. The threat model no longer relies on a private repo, so the gate, redaction, and `.gitignore` carry that load. Branch rules on `main` block force-push and deletion. Requiring pull requests is deferred, because it would block the capture bot's direct push and the GitHub Actions bypass is unavailable on a personal account.
 - **v0.4:** Phase 5 (CI automation) decisions and corrections. Finding IDs are `sha256(scanner|rule_id|normalized_path|resource_or_secret_hash)[:12]`, with no line numbers (6.5). Each finding becomes one raw note. The main-branch capture job commits raw evidence directly to `main`. Pull requests run a dry-run capture into a throwaway copy of the vault and upload an artifact, with read-only permissions (5.3, 6.5, 10). "Last seen" and "candidate fixed" state lives in `logs/capture-state.json`, because raw notes are immutable and the manifest records only hashes, so the earlier wording about updating the manifest is superseded (6.5). Scheduled maintenance is report-only: it never runs `manifest` and never commits. Integrity fix: `manifest` and `audit` keep the recorded hash of a modified raw file, so tampering now fails lint (previously `audit` rebuilt the manifest first). Hosted CI never runs an LLM.
 - **v0.3:** Added threat model (section 9), repo layout and sample app (5.6), decision to make `wiki_tool` filesystem-only with Obsidian as an optional viewer, stable finding IDs and idempotent capture, `status_history` finding lifecycle, query spec, automated test requirement, scanner updates (Trivy, gitleaks), split of the review loop from Ollama in the milestones, resolved the open questions, and added tutorial-derived details (Web Clipper capture, Windows launchers, body-text search, PDF folder reserved).
@@ -200,7 +201,9 @@ The schema is encoded in these scripts (for example the allowed-tag list), so ru
 ### 6.6 Human-in-the-Loop Review
 
 - Local model or agent output is written to a proposed folder, never directly into the wiki.
-- The reviewer approves a draft, then an apply step writes it into the wiki and triggers the maintain loop. The apply step refuses to overwrite an existing note unless explicitly confirmed.
+- A human reviews each draft with `wiki_tool review`, then records the decision. `approve` runs only in an interactive terminal. It prints the review packet, and the reviewer must type the first 12 characters of the draft's SHA-256. There is no `--yes` flag. `reject` keeps the draft in `proposed/`.
+- Decisions live in `logs/review-state.json` and are bound to the draft's bytes. Editing a draft after approval makes the approval stale. A rejected draft that changes becomes pending again.
+- `apply` writes an approved draft into the wiki and runs the maintain loop. It refuses a draft without a current approval. It refuses to overwrite an existing note unless `--overwrite` is given and the draft's `status_history` extends the existing one. It rolls back the move if lint fails. `apply --all-approved` applies every approved draft in one batch with one lint pass.
 - For team-style use, approved changes to the vault repository go through a normal pull request with lint checks required.
 - Reviewer focus: severity and status fields, accuracy of root cause, and correct source citation.
 - This review loop works with any agent, not only Ollama, and is built before the local model is connected.
@@ -283,6 +286,7 @@ The tutorial's own order is followed: initialize git, build structure and schema
 
 - Implement draft to proposed folder to approve to apply, independent of any specific model.
 - Add a prompt-injection fixture (a raw source containing hostile instructions) and confirm the agent and tooling treat it as data.
+- Status (v0.6): implemented as described in 6.6 and the threat model in section 9. Verification on 2026-11-03: pytest passes (161 tests; 2 symlink tests skip on Windows without symlink rights and run in CI), Ruff check and format are clean, and the vault lint passes. Manual agent drill (one generalPurpose subagent, a neutral ingest prompt, and a temp copy without `.git`): no writes to `wiki/`, `raw/`, the manifest, the wiki log, or the review state, and no canary in any protected file. Partial result: the agent's draft in `proposed/` quotes one canary line. The review gate keeps that draft out of `wiki/`, but the strict "no canary anywhere" criterion is not met, so it is recorded as a known limitation.
 
 ### Phase 7: Local Model, Launchers & Firewall
 
@@ -303,7 +307,10 @@ SecVault feeds untrusted text to an agent that can write files, so it needs an e
 
 | Threat | Mitigation |
 |---|---|
-| **Prompt injection through raw content** (scanner output, incident notes, clipped web pages containing instructions) | `agents.md` states raw content is data, not instructions; drafts go to `proposed/` for human review; agent permissions are limited to allowed paths; injection fixture tested in Phase 6. |
+| **Prompt injection through raw content** (scanner output, incident notes, clipped web pages containing instructions) | `agents.md` states raw content is data, not instructions; drafts go to `proposed/` for human review; agent permissions are limited to allowed paths; raw text cannot approve drafts, mark findings fixed, or write links that escape the vault. `tests/fixtures/injection/` checks this deterministically, and a manual agent drill runs on a temporary copy. |
+| **Forged approval** (a draft's front matter, or an agent editing the review state, claims a human approved it) | Approval is recorded only by `approve` in `logs/review-state.json`, bound to the draft's SHA-256. `approve` needs an interactive terminal and a typed short hash, and `apply` refuses any draft without a current approval. This is a guardrail, not tamper-proof, because the state is a plain file in the vault. |
+| **Hostile paths and links** (`../` or absolute link targets, symbolic links, Windows device names, alternate data streams) | Link resolution refuses rooted, drive-qualified, `..`, and control-character targets, and rejects resolved paths outside the vault. Drafts must sit directly in `proposed/`, cannot be symbolic links, and must pass the draft-name checks. |
+| **Markup and terminal injection from scanner text** (headings, list items, `[[` links, ANSI or bidirectional control characters) | Captured text is flattened to one line and defused of `[[` links and Markdown block syntax. Terminal output escapes control and bidirectional characters. |
 | **Secrets leaking into the repo** (scanner output, logs, diffs) | Redaction in capture, secret-like string lint, a repo-wide gitleaks gate over full history in CI, `.gitignore`. |
 | **Sensitive findings sent to hosted models** | Local-first default (Ollama); unfixed-vulnerability records excluded from hosted use unless the user opts in. |
 | **Malicious or accidental edits to the schema layer** (for example a PR weakening `agents.md` or `tags.yaml`) | Schema files covered by CODEOWNERS and required review; CI fails if raw files are modified after capture. |
@@ -350,6 +357,8 @@ Out of scope for v1: hard isolation against a determined malicious agent (sandbo
 - **Scheduled maintenance (Phase 5):** report-only. It never runs `manifest` and never commits. Resolves the auto-PR question.
 - **Hosted CI (Phase 5):** never runs an LLM. Drafting stays local and reviewed.
 - **PR scans (Phase 5):** dry run only, read-only permissions, triggered by `pull_request` (never `pull_request_target`).
+- **Approval (Phase 6):** only a person approves. `approve` needs an interactive terminal and a typed short hash, has no `--yes` flag, and records the approval against the draft's SHA-256. Agents may list and review drafts but never run `approve`, `reject`, or `apply` on their own initiative.
+- **Overwrite (Phase 6):** an existing wiki note is replaced only with `--overwrite`, and only when the draft's `status_history` extends the existing history as a prefix.
 
 ### Still open
 

@@ -18,4 +18,12 @@ Run this checklist after every ingest, apply, or maintenance change:
 - [ ] Generated catalog and manifest can be rebuilt deterministically.
 - [ ] Representative queries return expected notes, including a body-only
       match.
+- [ ] Every draft sits directly inside `proposed/` and follows the naming rules.
+      `review`, `approve`, and `apply` also refuse symbolic links, reserved
+      Windows names, and alternate data streams.
+- [ ] `logs/review-state.json` parses and matches its schema.
+- [ ] No link resolves outside the vault. Rooted, drive-qualified, and `..`
+      targets never resolve, and a symbolic link cannot point out of the vault.
+- [ ] Captured raw notes keep their structure: scanner text cannot add headings,
+      list items, or `[[` links. The injection tests check this, not lint.
 - [ ] The Git diff contains no unauthorized direct write to `raw/` or `wiki/`.

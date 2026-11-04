@@ -4,18 +4,19 @@ _Last updated: 2026-11-03_
 
 ## Current focus
 
-Planning is complete at the PRD level (v0.5). Phases 1 through 5 are complete.
+The PRD is at v0.6. Phases 1 through 5 are complete. Phase 6 (the review loop) is implemented, verified, and drilled on 2026-11-03. The phase commit is the last step.
 The build-time memory bank and Cursor rules are assistant context;
 the portable product entry point is `AGENTS.md`, with product skills under
-`.agents/skills/`. The next work is Phase 6: the review loop.
+`.agents/skills/`.
 
 ## Immediate next steps
 
-1. Implement draft -> `proposed/` -> approve -> apply, with validation and tests.
-2. Add a prompt-injection fixture to the test suite.
-3. Keep hosted CI free of LLM drafting; drafting remains local and reviewed.
-4. Preserve the Phase 4 demo as the regression narrative for later phases.
-5. Open GitHub decision: whether `main` requires pull requests and checks. Doing so blocks
+1. Commit Phase 6 on `main` without pushing (verification passed; see `progress.md`).
+2. Drill result recorded: no protected writes, but one draft quoted a canary. Decide later whether the drill needs a stricter rule for quoted text.
+3. Start Phase 7 (Ollama).
+4. Keep hosted CI free of LLM drafting; drafting remains local and reviewed.
+5. Preserve the Phase 4 demo as the regression narrative for later phases.
+6. Open GitHub decision: whether `main` requires pull requests and checks. Doing so blocks
    the capture bot's direct push, so it needs PR-based capture or a GitHub App bypass (see
    the GitHub setup record below).
 
@@ -104,4 +105,16 @@ Follow-ups, in rough priority order:
 5. Pin the runner image. `ubuntu-latest` now runs Ubuntu 26.04.1 LTS, and GitHub has announced a migration.
 6. Revisit the bot-commit gap: `GITHUB_TOKEN` pushes do not start `ci.yml`, so the `secrets` gate does not scan the evidence commit. Revisit it with the PR-based option.
 7. Review Dependabot's weekly pull requests, and require `ci` and `secrets` on them once enforcement exists.
-8. Start Phase 6 (review loop).
+8. Phase 6 (review loop) is implemented; verify and commit it. See the decisions below.
+
+## Decisions made during Phase 6
+
+- `approve` is TTY-only: it runs only when stdin and stdout are terminals. It prints the review packet to stderr, requires the first 12 hex characters of the normalized SHA-256, and has no `--yes` flag. The library function `approve_draft` is not gated, so tests can call it.
+- Approval is bound to content. An approved draft that changes becomes `stale`, and a rejected draft that changes becomes `pending`. `apply` refuses both.
+- Decisions live in `logs/review-state.json`, written atomically. It is a guardrail against agent mistakes, not a tamper-proof record; the PRD threat model says so.
+- `reject` requires `--reviewer` as well as `--reason`. The plan asked only for the reason, so this is a recorded deviation.
+- An overwrite needs `--overwrite` and a `status_history` that the existing history prefixes. Batch `apply --all-approved` never overwrites, and it rolls back as one unit.
+- Link resolution refuses rooted (`/x`) targets. An earlier version stripped the leading slash and re-rooted the link inside the vault, which contradicted the documented rule; the fix is in `_clean_link_target`.
+- The basename fallback in link resolution resolves only a single match that stays inside the vault, so a symbolic link cannot point out through it.
+- Raw notes stay free of `[[` by design, because lint checks links in raw notes. The escape-link case is tested with a generated draft.
+- Injection fixtures live in `tests/fixtures/injection/`. The real `vault/raw/` never holds canaries.

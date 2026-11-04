@@ -25,6 +25,13 @@ The audit command repeats the deterministic checks and appends an entry to
 `vault/logs/wiki-log.md`. Generated catalog and manifest changes are expected;
 review them before committing.
 
+## Drafts
+
+`python -m wiki_tool proposed --vault vault` lists each draft with its approval
+state: `pending`, `approved`, `stale`, `rejected`, or `invalid`. Maintenance
+never approves, rejects, or applies a draft. Run `apply` only when a human asks,
+and only for a draft listed as `approved`.
+
 ## Capture
 
 Scanner findings enter the raw layer only through `wiki_tool capture`:

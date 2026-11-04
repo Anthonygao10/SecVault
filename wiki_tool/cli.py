@@ -8,11 +8,13 @@ import sys
 from collections.abc import Sequence
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 from .capture import PARSERS, capture_findings
 from .operations import (
-    DraftApplyError,
+    DraftError,
     VaultError,
+    apply_approved,
     apply_draft,
     audit_vault,
     build_catalog,
@@ -22,6 +24,18 @@ from .operations import (
     update_manifest,
 )
 from .report import build_report, render_markdown
+from .review import (
+    NOTE_LIMIT,
+    REVIEWER_LIMIT,
+    approve_draft,
+    clean_single_line,
+    list_drafts,
+    reject_draft,
+    render_packet,
+    review_packet,
+)
+from .review_state import SHORT_FINGERPRINT_LENGTH, ReviewStateError
+from .safe_text import terminal_safe
 
 COMMANDS = {
     "index": "Build the note catalog.",
@@ -29,10 +43,14 @@ COMMANDS = {
     "coverage": "Find raw sources without wiki coverage.",
     "lint": "Validate vault structure and integrity.",
     "query": "Search the note catalog.",
-    "apply": "Apply an approved draft from proposed/.",
+    "proposed": "List drafts in proposed/ with their review state.",
+    "review": "Print the review packet for one draft.",
+    "approve": "Record a human approval for one draft (interactive terminal only).",
+    "reject": "Record a rejection; the draft stays in proposed/.",
+    "apply": "Apply an approved draft from proposed/ to wiki/.",
     "audit": "Run the maintenance checks.",
     "capture": "Capture scanner findings as redacted raw evidence.",
-    "report": "Summarize integrity, coverage, and capture state.",
+    "report": "Summarize integrity, coverage, capture, and draft state.",
 }
 
 
@@ -70,12 +88,38 @@ def build_parser() -> argparse.ArgumentParser:
             command_parser.add_argument("--type", dest="note_type", help="Filter by note type.")
             command_parser.add_argument("--tag", help="Filter by exact tag.")
             command_parser.add_argument("--limit", type=int, default=10)
+        elif name in {"review", "approve", "reject"}:
+            command_parser.add_argument(
+                "draft", type=Path, help="Draft file directly inside proposed/."
+            )
+            if name in {"approve", "reject"}:
+                command_parser.add_argument(
+                    "--reviewer", required=True, help="Name of the human reviewer."
+                )
+            if name == "approve":
+                command_parser.add_argument("--note", default="", help="Optional one-line note.")
+            if name == "reject":
+                command_parser.add_argument(
+                    "--reason",
+                    required=True,
+                    help="One-line reason. The draft stays in proposed/.",
+                )
         elif name == "apply":
-            command_parser.add_argument("draft", type=Path, help="Draft file to apply.")
+            command_parser.add_argument(
+                "draft",
+                type=Path,
+                nargs="?",
+                help="Approved draft directly inside proposed/.",
+            )
+            command_parser.add_argument(
+                "--all-approved",
+                action="store_true",
+                help="Apply every approved draft in one batch with one lint pass.",
+            )
             command_parser.add_argument(
                 "--overwrite",
                 action="store_true",
-                help="Allow replacing an existing wiki note.",
+                help="Replace an existing wiki note whose status_history the draft extends.",
             )
         elif name == "capture":
             command_parser.add_argument(
@@ -116,6 +160,44 @@ def _print_lint(lint: dict[str, object]) -> None:
         print(f"- {error}")
 
 
+def _is_interactive() -> bool:
+    """True only when a person is at the terminal. Agents, pipes, and test runners are not."""
+    try:
+        return bool(sys.stdin.isatty() and sys.stdout.isatty())
+    except (AttributeError, ValueError):
+        return False
+
+
+def _approve_interactively(args: argparse.Namespace) -> dict[str, Any]:
+    """Show the review packet, then approve only after a person types its short hash."""
+    if not _is_interactive():
+        raise DraftError(
+            "approve needs an interactive terminal; a human must run it and type the hash"
+        )
+    clean_single_line(args.reviewer, "reviewer", REVIEWER_LIMIT, required=True)
+    clean_single_line(args.note, "note", NOTE_LIMIT, required=False)
+    packet = review_packet(args.vault, args.draft)
+    print(render_packet(packet), end="", file=sys.stderr)
+    print(
+        f"Type the first {SHORT_FINGERPRINT_LENGTH} characters of the hash to approve, "
+        "or press Enter to cancel: ",
+        end="",
+        file=sys.stderr,
+        flush=True,
+    )
+    try:
+        typed = input()
+    except (EOFError, KeyboardInterrupt) as exc:
+        raise DraftError("approval cancelled") from exc
+    return approve_draft(
+        args.vault,
+        args.draft,
+        reviewer=args.reviewer,
+        note=args.note,
+        confirmation=typed,
+    )
+
+
 def _text_result(command: str, result: object) -> None:
     if command == "lint" and isinstance(result, dict):
         if result.get("ok"):
@@ -145,12 +227,48 @@ def _text_result(command: str, result: object) -> None:
             f"{len(result['candidate_fixed'])} candidate_fixed"
         )
         for path in result["created"]:
-            print(f"  + {path}")
+            print(f"  + {terminal_safe(path)}")
         for finding_id in result["candidate_fixed"]:
-            print(f"  ? {finding_id}: candidate for fixed; a human confirms it")
+            print(f"  ? {terminal_safe(finding_id)}: candidate for fixed; a human confirms it")
         _print_lint(result["lint"])
         return
-    print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
+    if command == "proposed" and isinstance(result, list):
+        if not result:
+            print("No drafts in proposed/.")
+            return
+        for entry in result:
+            target = entry["target"] or "no applicable wiki target"
+            print(terminal_safe(f"{entry['approval']:<9} {entry['draft']} -> {target}"))
+            for problem in entry["problems"]:
+                print(terminal_safe(f"          ! {problem}"))
+        return
+    if command == "approve" and isinstance(result, dict):
+        print(
+            terminal_safe(
+                f"approved {result['draft']} as {result['reviewer']} "
+                f"(sha256 {result['sha256'][:12]})"
+            )
+        )
+        return
+    if command == "reject" and isinstance(result, dict):
+        print(
+            terminal_safe(
+                f"rejected {result['draft']} as {result['reviewer']}; "
+                "the draft stays in proposed/ and apply will refuse it"
+            )
+        )
+        return
+    if command == "apply" and isinstance(result, dict):
+        applied = result["applied"] if isinstance(result["applied"], list) else [result["applied"]]
+        if not applied:
+            print("No approved drafts to apply.")
+            return
+        for target in applied:
+            print(f"  + {terminal_safe(str(target))}")
+        if result["audit"]:
+            print(f"audit: {result['audit']['status']}")
+        return
+    print(terminal_safe(json.dumps(result, indent=2, ensure_ascii=False, default=str)))
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -161,6 +279,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command is None:
         parser.print_help()
         return 0
+    if args.command == "apply" and bool(args.draft) == bool(args.all_approved):
+        parser.error("apply needs exactly one of a draft path or --all-approved")
 
     try:
         if args.command == "index":
@@ -179,8 +299,24 @@ def main(argv: Sequence[str] | None = None) -> int:
                 tag=args.tag,
                 limit=args.limit,
             )
+        elif args.command == "proposed":
+            result = list_drafts(args.vault)
+        elif args.command == "review":
+            result = review_packet(args.vault, args.draft)
+        elif args.command == "approve":
+            result = _approve_interactively(args)
+        elif args.command == "reject":
+            result = reject_draft(
+                args.vault,
+                args.draft,
+                reviewer=args.reviewer,
+                reason=args.reason,
+            )
         elif args.command == "apply":
-            result = apply_draft(args.vault, args.draft, overwrite=args.overwrite)
+            if args.all_approved:
+                result = apply_approved(args.vault)
+            else:
+                result = apply_draft(args.vault, args.draft, overwrite=args.overwrite)
         elif args.command == "capture":
             result = capture_findings(
                 args.vault,
@@ -194,14 +330,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = build_report(args.vault)
         else:
             result = audit_vault(args.vault)
-    except (VaultError, DraftApplyError) as exc:
+    except (VaultError, ReviewStateError) as exc:
         print(f"wiki-tool: {exc}", file=sys.stderr)
         return 2
 
     if args.json:
-        print(json.dumps(result, indent=2, ensure_ascii=False, default=str))
+        print(terminal_safe(json.dumps(result, indent=2, ensure_ascii=False, default=str)))
+    elif args.command == "review":
+        print(render_packet(result), end="")
     elif args.command == "report":
-        print(render_markdown(result), end="")
+        print(terminal_safe(render_markdown(result)), end="")
     else:
         _text_result(args.command, result)
 
@@ -209,6 +347,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
     if args.command == "audit" and isinstance(result, dict) and result.get("status") != "passed":
         return 1
+    if args.command == "apply" and isinstance(result, dict) and result.get("audit"):
+        if result["audit"]["status"] != "passed":
+            return 1
     if args.command == "capture" and isinstance(result, dict) and not result["lint"]["ok"]:
         return 1
     if args.command == "report" and isinstance(result, dict) and not result["ok"]:

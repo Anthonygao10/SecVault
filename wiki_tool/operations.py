@@ -6,10 +6,9 @@ LLM. Agents use them through the CLI and the repository-local workflow skills.
 
 from __future__ import annotations
 
-import hashlib
 import json
+import os
 import re
-import shutil
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -18,7 +17,16 @@ from typing import Any
 
 import yaml
 
+from .hashing import normalized_digest, sha256_file
 from .redact import contains_secret
+from .review_state import (
+    ReviewStateError,
+    draft_status,
+    load_review_state,
+    record_applied,
+    require_approval,
+    save_review_state,
+)
 
 COMMON_FIELDS = ("type", "title", "tags", "created", "updated", "sources")
 SOURCE_FIELDS = COMMON_FIELDS + (
@@ -48,14 +56,25 @@ TYPE_DIRECTORIES = {
 GENERATED_PATHS = {"logs/catalog.json", "raw/manifest.json"}
 WIKILINK_PATTERN = re.compile(r"\[\[([^\]]+)\]\]")
 DATE_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}")
+LINK_UNSAFE_PATTERN = re.compile(r"[\x00-\x1f\x7f]")
+DRAFT_RESERVED_NAMES = frozenset(
+    {"CON", "PRN", "AUX", "NUL"}
+    | {f"COM{number}" for number in range(1, 10)}
+    | {f"LPT{number}" for number in range(1, 10)}
+)
+DRAFT_UNSAFE_NAME_PATTERN = re.compile(r'[\x00-\x1f\x7f/\\:*?"<>|]')
 
 
 class VaultError(RuntimeError):
     """Base error for expected vault operation failures."""
 
 
-class DraftApplyError(VaultError):
-    """Raised when a proposed draft cannot be safely applied."""
+class DraftError(VaultError):
+    """Raised when a proposed draft is unsafe to list, review, or decide on."""
+
+
+class DraftApplyError(DraftError):
+    """Raised when a proposed draft cannot be safely applied to the wiki."""
 
 
 @dataclass(frozen=True)
@@ -128,7 +147,11 @@ def _normalize_value(value: Any) -> Any:
 
 def parse_markdown(path: Path) -> ParsedNote:
     """Parse YAML front matter and body from a Markdown file."""
-    text = _read_text(path)
+    return parse_note_text(path, _read_text(path))
+
+
+def parse_note_text(path: Path, text: str) -> ParsedNote:
+    """Parse YAML front matter and body from Markdown text that is already in memory."""
     if not text.startswith("---"):
         return ParsedNote(path, {}, text, "missing YAML front matter")
 
@@ -221,27 +244,39 @@ def _clean_link_target(target: str) -> str:
     if target.strip().startswith("[[") and target.strip().endswith("]]"):
         target = target.strip()[2:-2]
     target = target.split("|", 1)[0].split("#", 1)[0].strip()
-    return target.replace("\\", "/").removeprefix("./").removeprefix("/")
+    return target.replace("\\", "/").removeprefix("./")
 
 
 def resolve_link(vault: Path, target: str) -> Path | None:
-    """Resolve a vault-relative or basename-style Obsidian link."""
+    """Resolve a vault-relative or basename-style Obsidian link.
+
+    Targets that are rooted, contain a colon (drive letters and alternate streams),
+    carry control characters, or climb with `..` never resolve. A resolved file must
+    also stay inside the vault, which catches symbolic links that point outside.
+    """
     cleaned = _clean_link_target(target)
     if not cleaned or cleaned.startswith(("http://", "https://")):
         return None
+    if cleaned.startswith("/") or ":" in cleaned or LINK_UNSAFE_PATTERN.search(cleaned):
+        return None
+    if ".." in cleaned.split("/"):
+        return None
 
+    root = vault.resolve()
     candidate = vault / cleaned
     candidates = [candidate]
     if candidate.suffix.lower() != ".md":
         candidates.append(candidate.with_suffix(".md"))
     for possible in candidates:
         if possible.is_file():
-            return possible.resolve()
+            resolved = possible.resolve()
+            return resolved if resolved.is_relative_to(root) else None
 
     if "/" not in cleaned:
         basename = Path(cleaned).stem
         matches = sorted(path.resolve() for path in vault.rglob("*.md") if path.stem == basename)
-        if len(matches) == 1:
+        # A single match counts only if it stays inside the vault. Ambiguous names never resolve.
+        if len(matches) == 1 and matches[0].is_relative_to(root):
             return matches[0]
     return None
 
@@ -256,7 +291,7 @@ def _link_target_is_raw_source(vault: Path, target: str) -> bool:
         return str(resolved).startswith(str((vault / "raw" / "sources").resolve()))
 
 
-def _source_links(metadata: Mapping[str, Any]) -> list[str]:
+def source_links(metadata: Mapping[str, Any]) -> list[str]:
     sources = metadata.get("sources")
     if not isinstance(sources, list):
         return []
@@ -303,7 +338,7 @@ def _expected_fields(note_type: str) -> tuple[str, ...]:
     return COMMON_FIELDS
 
 
-def _name_matches(path: Path, note_type: str, vault: Path) -> bool:
+def name_matches(path: Path, note_type: str, vault: Path) -> bool:
     relative = Path(relative_path(vault, path))
     filename = relative.name
     if note_type == "source":
@@ -366,26 +401,7 @@ def collect_catalog(vault: str | Path) -> dict[str, Any]:
     return {"version": 1, "notes": entries}
 
 
-TEXT_SUFFIXES = {".md", ".json", ".txt", ".yaml", ".yml"}
-
-
-def _sha256(path: Path) -> str:
-    """Hash a file; text files are hashed with LF endings so checkouts agree.
-
-    Git on Windows may rewrite line endings on checkout. Normalizing CRLF to LF
-    keeps manifest hashes stable across operating systems without hiding any
-    other content change.
-    """
-    if path.suffix.lower() in TEXT_SUFFIXES:
-        return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def _load_json(path: Path, default: Any) -> Any:
+def load_json(path: Path, default: Any) -> Any:
     if not path.exists():
         return default
     try:
@@ -398,7 +414,7 @@ def update_manifest(vault: str | Path) -> dict[str, Any]:
     """Hash raw files and write the raw-source manifest."""
     root = vault_path(vault)
     manifest_path = root / "raw" / "manifest.json"
-    previous = _load_json(manifest_path, {"files": {}})
+    previous = load_json(manifest_path, {"files": {}})
     previous_files = previous.get("files", {}) if isinstance(previous, dict) else {}
     files: dict[str, Any] = {}
     cited_sources = _cited_raw_sources(root)
@@ -408,7 +424,7 @@ def update_manifest(vault: str | Path) -> dict[str, Any]:
         relative = relative_path(root, path)
         if relative == "raw/manifest.json" or path.name == ".gitkeep":
             continue
-        digest = _sha256(path)
+        digest = sha256_file(path)
         previous_record = previous_files.get(relative)
         if previous_record is not None and previous_record.get("sha256") not in (None, digest):
             # Raw evidence is immutable: never re-bless a modified file. Keep the
@@ -439,7 +455,7 @@ def _cited_raw_sources(root: Path) -> set[Path]:
     cited: set[Path] = set()
     for path in _iter_files(root / "wiki", ".md"):
         note = parse_markdown(path)
-        for target in _source_links(note.metadata):
+        for target in source_links(note.metadata):
             resolved = resolve_link(root, target)
             if resolved is not None:
                 try:
@@ -475,7 +491,7 @@ def _manifest_errors(root: Path) -> list[str]:
             return []
         return ["raw manifest is missing; run `wiki_tool manifest`"]
 
-    manifest = _load_json(manifest_path, {})
+    manifest = load_json(manifest_path, {})
     records = manifest.get("files", {}) if isinstance(manifest, dict) else {}
     errors: list[str] = []
     current_paths = set()
@@ -486,7 +502,7 @@ def _manifest_errors(root: Path) -> list[str]:
         if record is None:
             errors.append(f"{relative}: missing from raw manifest")
             continue
-        actual = _sha256(path)
+        actual = sha256_file(path)
         if actual != record.get("sha256"):
             errors.append(f"{relative}: raw content hash does not match manifest")
     for relative in sorted(set(records) - current_paths):
@@ -507,6 +523,8 @@ def lint_vault(vault: str | Path) -> LintResult:
     notes = iter_note_files(root)
     for path in notes:
         relative = relative_path(root, path)
+        if relative.startswith("proposed/") and relative.count("/") > 1:
+            errors.append(f"{relative}: drafts must sit directly in proposed/")
         note = parse_markdown(path)
         if note.error:
             errors.append(f"{relative}: {note.error}")
@@ -566,7 +584,7 @@ def lint_vault(vault: str | Path) -> LintResult:
                     if "date" in entry and not _is_date(entry["date"]):
                         errors.append(f"{relative}: status_history[{index}] date is invalid")
 
-        if not _name_matches(path, note_type, root):
+        if not name_matches(path, note_type, root):
             errors.append(f"{relative}: file name does not follow schema/naming.md")
 
         links = extract_wikilinks(note.body) + _metadata_links(metadata)
@@ -575,16 +593,20 @@ def lint_vault(vault: str | Path) -> LintResult:
                 errors.append(f"{relative}: broken wiki link `[[{target}]]`")
 
         if relative.startswith(("wiki/", "proposed/")):
-            source_links = _source_links(metadata)
-            if not source_links:
+            cited = source_links(metadata)
+            if not cited:
                 errors.append(f"{relative}: wiki note must cite at least one raw source")
-            for source in source_links:
+            for source in cited:
                 if not _link_target_is_raw_source(root, source):
                     errors.append(
                         f"{relative}: source citation does not resolve to raw/sources: {source}"
                     )
 
     errors.extend(_manifest_errors(root))
+    try:
+        load_review_state(root)
+    except ReviewStateError as exc:
+        errors.append(str(exc))
     for path in _iter_files(root):
         relative = relative_path(root, path)
         if path.name == ".gitkeep" or relative.startswith(".obsidian/"):
@@ -599,7 +621,7 @@ def _load_catalog(root: Path) -> dict[str, Any]:
     catalog_path = root / "logs" / "catalog.json"
     if not catalog_path.exists():
         return build_catalog(root)
-    loaded = _load_json(catalog_path, {"notes": []})
+    loaded = load_json(catalog_path, {"notes": []})
     if not isinstance(loaded, dict) or not isinstance(loaded.get("notes"), list):
         raise VaultError("catalog must contain a `notes` list")
     return loaded
@@ -715,54 +737,269 @@ def audit_vault(vault: str | Path) -> dict[str, Any]:
     }
 
 
+@dataclass(frozen=True)
+class DraftRef:
+    """A draft that passed the location and name checks, read once for hashing and parsing."""
+
+    path: Path
+    relative: str
+    name: str
+    data: bytes
+    fingerprint: str
+    note: ParsedNote
+
+
+@dataclass(frozen=True)
+class _ApplyPlan:
+    """One approved draft that is cleared to move into the wiki."""
+
+    draft: DraftRef
+    target: Path
+    backup: bytes | None
+    reviewer: str
+
+
+def draft_name_problem(name: str) -> str | None:
+    """Return why a draft file name is unsafe, or None when the name is acceptable."""
+    if not name or name.startswith("."):
+        return "draft name must not be empty or hidden"
+    if DRAFT_UNSAFE_NAME_PATTERN.search(name):
+        return "draft name contains a character that is unsafe in paths or on Windows"
+    if name != name.strip() or name.endswith("."):
+        return "draft name must not end with a space or a dot"
+    if not name.endswith(".md"):
+        return "draft name must end with .md"
+    if name.split(".", 1)[0].upper() in DRAFT_RESERVED_NAMES:
+        return "draft name uses a reserved Windows device name"
+    return None
+
+
+def errors_for(relative: str, errors: Iterable[str]) -> list[str]:
+    """Return the lint errors that belong to one vault-relative file."""
+    prefix = f"{relative}:"
+    return [error for error in errors if error.startswith(prefix)]
+
+
+def draft_target(note_type: object, name: str) -> str | None:
+    """Return the vault-relative wiki path a draft of this type would occupy."""
+    if not isinstance(note_type, str) or note_type not in TYPE_DIRECTORIES:
+        return None
+    return f"wiki/{TYPE_DIRECTORIES[note_type]}/{name}"
+
+
+def resolve_draft(vault: str | Path, draft: str | Path) -> DraftRef:
+    """Locate one draft that sits directly in vault/proposed/ and read it once.
+
+    Symbolic links, `..` escapes, and unsafe names are refused before any content is
+    read. A relative path is tried from the current directory first, then from the
+    vault root.
+    """
+    root = vault_path(vault).resolve()
+    proposed = (root / "proposed").resolve()
+    supplied = Path(draft).expanduser()
+    if not supplied.is_absolute():
+        from_cwd = Path.cwd() / supplied
+        supplied = from_cwd if from_cwd.exists() else root / supplied
+    lexical = Path(os.path.abspath(supplied))
+    if os.path.normcase(str(lexical.parent.resolve())) != os.path.normcase(str(proposed)):
+        raise DraftError("draft must be a file directly inside vault/proposed/")
+    if supplied.is_symlink() or lexical.is_symlink():
+        raise DraftError("draft must not be a symbolic link")
+    problem = draft_name_problem(lexical.name)
+    if problem is not None:
+        raise DraftError(problem)
+    if not lexical.is_file():
+        raise DraftError(f"draft does not exist: proposed/{lexical.name}")
+    data = lexical.read_bytes()
+    note = parse_note_text(lexical, data.decode("utf-8", errors="replace"))
+    return DraftRef(
+        path=lexical,
+        relative=f"proposed/{lexical.name}",
+        name=lexical.name,
+        data=data,
+        fingerprint=normalized_digest(data),
+        note=note,
+    )
+
+
+def _approval_record(root: Path, ref: DraftRef) -> dict[str, Any]:
+    try:
+        return require_approval(load_review_state(root), ref.name, ref.fingerprint)
+    except ReviewStateError as exc:
+        raise DraftApplyError(str(exc)) from exc
+
+
+def _require_history_extends(existing: ParsedNote, replacement: ParsedNote) -> None:
+    """An overwrite may add history entries but may not rewrite or drop existing ones."""
+    old = _normalize_value(existing.metadata.get("status_history") or [])
+    new = _normalize_value(replacement.metadata.get("status_history") or [])
+    if not isinstance(old, list) or not isinstance(new, list):
+        raise DraftApplyError("status_history must be a list in both the draft and the note")
+    if new[: len(old)] != old:
+        raise DraftApplyError(
+            "overwrite refused: the draft's status_history must extend the existing "
+            "history as a prefix"
+        )
+
+
+def _plan_apply(
+    root: Path,
+    ref: DraftRef,
+    *,
+    overwrite: bool,
+    problems: Sequence[str],
+) -> _ApplyPlan:
+    """Check what must hold before a draft may move. Nothing is changed here."""
+    if problems:
+        raise DraftApplyError("cannot apply invalid draft: " + "; ".join(problems))
+    note_type = ref.note.metadata.get("type")
+    relative_target = draft_target(note_type, ref.name)
+    if relative_target is None:
+        raise DraftApplyError(f"draft type is not an applicable wiki type: {note_type}")
+    record = _approval_record(root, ref)
+    target = root / relative_target
+    backup: bytes | None = None
+    if target.exists() or target.is_symlink():
+        if not overwrite:
+            raise DraftApplyError(f"refusing to overwrite existing note: {relative_target}")
+        if not target.is_file() or target.is_symlink():
+            raise DraftApplyError(f"refusing to overwrite a non-file: {relative_target}")
+        _require_history_extends(parse_markdown(target), ref.note)
+        backup = target.read_bytes()
+    return _ApplyPlan(draft=ref, target=target, backup=backup, reviewer=str(record["reviewer"]))
+
+
+def _roll_back(moved: Sequence[_ApplyPlan]) -> list[str]:
+    """Undo completed moves in reverse order. Returns the names that could not be restored."""
+    incomplete: list[str] = []
+    for plan in reversed(moved):
+        try:
+            if plan.backup is None:
+                plan.target.unlink(missing_ok=True)
+            else:
+                plan.target.write_bytes(plan.backup)
+            if not plan.draft.path.exists():
+                plan.draft.path.write_bytes(plan.draft.data)
+        except OSError:
+            incomplete.append(plan.draft.name)
+    return incomplete
+
+
+def _apply_plans(root: Path, plans: Sequence[_ApplyPlan]) -> None:
+    """Move drafts into the wiki as one unit: lint once, and undo every move on failure."""
+    moved: list[_ApplyPlan] = []
+    try:
+        for plan in plans:
+            plan.target.parent.mkdir(parents=True, exist_ok=True)
+            if plan.backup is None:
+                try:
+                    stream = plan.target.open("xb")
+                except FileExistsError as exc:
+                    relative_target = plan.target.relative_to(root).as_posix()
+                    raise DraftApplyError(
+                        f"refusing to overwrite existing note: {relative_target}"
+                    ) from exc
+                moved.append(plan)
+                with stream:
+                    stream.write(plan.draft.data)
+            else:
+                moved.append(plan)
+                plan.target.write_bytes(plan.draft.data)
+            plan.draft.path.unlink()
+        lint = lint_vault(root)
+        if not lint.ok:
+            raise DraftApplyError("draft failed lint after apply: " + "; ".join(lint.errors))
+    except Exception as exc:
+        incomplete = _roll_back(moved)
+        if incomplete:
+            raise DraftApplyError(
+                "apply failed and the rollback was incomplete; restore from git: "
+                + ", ".join(incomplete)
+            ) from exc
+        raise
+
+
+def _record_applied(root: Path, plans: Sequence[_ApplyPlan]) -> list[str]:
+    """Retire each applied decision, keep it in the event trail, and log the change."""
+    state = load_review_state(root)
+    targets: list[str] = []
+    for plan in plans:
+        target = plan.target.relative_to(root).as_posix()
+        record_applied(
+            state,
+            plan.draft.name,
+            fingerprint=plan.draft.fingerprint,
+            target=target,
+            approved_by=plan.reviewer,
+        )
+        targets.append(target)
+    save_review_state(root, state)
+    for plan, target in zip(plans, targets, strict=True):
+        append_log(
+            root,
+            f"applied {plan.draft.name} to {target}; approved_by={plan.reviewer}; "
+            f"sha256={plan.draft.fingerprint[:12]}",
+        )
+    return targets
+
+
 def apply_draft(
     vault: str | Path,
     draft: str | Path,
     *,
     overwrite: bool = False,
 ) -> dict[str, Any]:
-    """Move an approved proposed note into its authoritative wiki directory."""
+    """Move one approved proposed note into its authoritative wiki directory.
+
+    The draft must sit directly in vault/proposed/, lint cleanly, and carry an approval
+    for its exact current bytes. Overwriting also needs a status_history that extends
+    the existing one. The vault is linted after the move, and a failure restores the
+    draft and the previous note.
+    """
     root = vault_path(vault).resolve()
-    draft_path = Path(draft).expanduser()
-    if not draft_path.is_absolute():
-        direct = (Path.cwd() / draft_path).resolve()
-        draft_path = direct if direct.exists() else (root / draft_path).resolve()
-    else:
-        draft_path = draft_path.resolve()
-    proposed_root = (root / "proposed").resolve()
-    try:
-        draft_path.relative_to(proposed_root)
-    except ValueError as exc:
-        raise DraftApplyError("draft must be located under vault/proposed/") from exc
-    if not draft_path.is_file():
-        raise DraftApplyError(f"draft does not exist: {draft_path}")
-
-    note = parse_markdown(draft_path)
-    if note.error:
-        raise DraftApplyError(f"cannot apply invalid draft: {note.error}")
-    note_type = note.metadata.get("type")
-    if note_type not in TYPE_DIRECTORIES:
-        raise DraftApplyError(f"draft type is not an applicable wiki type: {note_type}")
-
-    target = root / "wiki" / TYPE_DIRECTORIES[note_type] / draft_path.name
-    target.parent.mkdir(parents=True, exist_ok=True)
-    if target.exists() and not overwrite:
-        raise DraftApplyError(f"refusing to overwrite existing note: {relative_path(root, target)}")
-
-    backup = target.read_bytes() if target.exists() else None
-    draft_bytes = draft_path.read_bytes()
-    shutil.move(str(draft_path), str(target))
-    lint = lint_vault(root)
-    if not lint.ok:
-        if target.exists():
-            target.unlink()
-        if backup is not None:
-            target.write_bytes(backup)
-        draft_path.write_bytes(draft_bytes)
-        raise DraftApplyError("draft failed lint after apply: " + "; ".join(lint.errors))
-
-    audit = audit_vault(root)
+    ref = resolve_draft(root, draft)
+    problems = errors_for(ref.relative, lint_vault(root).errors)
+    plan = _plan_apply(root, ref, overwrite=overwrite, problems=problems)
+    _apply_plans(root, [plan])
+    applied = _record_applied(root, [plan])
     return {
-        "applied": relative_path(root, target),
-        "audit": audit,
+        "applied": applied[0],
+        "audit": audit_vault(root),
+    }
+
+
+def apply_approved(vault: str | Path) -> dict[str, Any]:
+    """Apply every approved draft in one batch with one lint pass.
+
+    A draft that cannot be read safely, or that has a problem, stops the batch before
+    anything moves; this fails closed for unapproved drafts too. Batch apply never
+    overwrites an existing note; overwrites are applied one at a time with `--overwrite`.
+    If the lint pass fails, every move is rolled back.
+    """
+    root = vault_path(vault).resolve()
+    try:
+        state = load_review_state(root)
+    except ReviewStateError as exc:
+        raise DraftApplyError(str(exc)) from exc
+    proposed = root / "proposed"
+    approved: list[DraftRef] = []
+    if proposed.is_dir():
+        for path in sorted(proposed.glob("*.md")):
+            if path.name == "README.md":
+                continue
+            ref = resolve_draft(root, path)
+            if draft_status(state, ref.name, ref.fingerprint)[0] == "approved":
+                approved.append(ref)
+    if not approved:
+        return {"applied": [], "audit": None}
+    lint_errors = lint_vault(root).errors
+    plans = [
+        _plan_apply(root, ref, overwrite=False, problems=errors_for(ref.relative, lint_errors))
+        for ref in approved
+    ]
+    _apply_plans(root, plans)
+    applied = _record_applied(root, plans)
+    return {
+        "applied": applied,
+        "audit": audit_vault(root),
     }

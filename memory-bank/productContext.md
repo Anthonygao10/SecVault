@@ -12,7 +12,7 @@ A coding assistant starts every session with zero knowledge of a project's past 
 1. Push -> GitHub Actions runs Trivy, Checkov, gitleaks, tests -> normalized, redacted findings written to `raw/sources/`.
 2. Manual capture (Obsidian Web Clipper, pasted incident notes) uses the same source template.
 3. Ingest skill finds uncovered raw sources -> agent drafts to `proposed/` using templates.
-4. Human approves -> apply step writes to wiki (refuses to overwrite without confirmation) -> maintain loop rebuilds catalog, lints, updates manifest, logs, commits.
+4. A human runs `review` on each draft, then records `approve` or `reject` in an interactive terminal -> `apply` writes an approved draft to the wiki (it refuses to overwrite unless `--overwrite` extends the status history) -> maintain loop rebuilds catalog, lints, updates manifest, logs, commits.
 5. PR merge gate re-runs lint and tests.
 6. Later coding session queries the catalog and recalls the finding.
 

@@ -7,9 +7,9 @@ tooling.
 
 ## Project status
 
-Phases 1 through 5 are complete: the vault schema and templates, the
+Phases 1 through 6 are complete: the vault schema and templates, the
 `wiki_tool` commands, the repo-local skills, a manually validated sample app,
-and CI automation. Phase 6 (the review loop) is next.
+CI automation, and the review loop. Phase 7 (a local model) is next.
 
 Read `AGENTS.md` before working on the product. The product's vault
 constitution lives at `vault/agents.md`.
@@ -36,6 +36,23 @@ Obsidian is an optional viewer and local interactive integration.
 `capture` accepts Trivy, Checkov, or gitleaks JSON. It redacts secret-like
 values, writes one raw note per finding, and refuses to run when the vault does
 not lint cleanly. `report` is read-only.
+
+### Review loop
+
+Drafts land in `vault/proposed/`. A person reviews them and records the decision:
+
+```powershell
+.\.venv\Scripts\python.exe -m wiki_tool proposed --vault vault
+.\.venv\Scripts\python.exe -m wiki_tool review proposed\<draft>.md --vault vault
+.\.venv\Scripts\python.exe -m wiki_tool approve proposed\<draft>.md --vault vault --reviewer "<name>"
+.\.venv\Scripts\python.exe -m wiki_tool apply proposed\<draft>.md --vault vault
+```
+
+`approve` runs only in an interactive terminal. It shows the review packet and
+asks for the first 12 characters of the draft's SHA-256, and it has no `--yes`
+flag. `apply` refuses any draft without a current approval, so a draft written
+by an agent cannot reach `vault/wiki/` on its own. Approval is bound to the
+draft's exact bytes, and an edit after approval makes it stale.
 
 ## Continuous integration
 

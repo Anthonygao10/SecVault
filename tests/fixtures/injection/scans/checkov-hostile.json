@@ -1,0 +1,21 @@
+{
+  "check_type": "terraform",
+  "results": {
+    "failed_checks": [
+      {
+        "check_id": "CKV_AWS_999",
+        "check_name": "Injected check `name`\n## Forged heading CANARY-CHECKNAME-4d5e",
+        "check_result": {
+          "result": "FAILED"
+        },
+        "file_path": "\\main.tf",
+        "file_line_range": [10, 12],
+        "resource": "aws_s3_bucket.hostile`\n- bullet",
+        "severity": "HIGH",
+        "short_description": "Short [[raw/sources/source-2026-11-02-hostile-note]] CANARY-SHORT-6f7a",
+        "guideline": "https://example.invalid/guideline\n\n> quoted CANARY-GUIDE-8b9c"
+      }
+    ],
+    "passed_checks": []
+  }
+}

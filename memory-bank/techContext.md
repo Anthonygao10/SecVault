@@ -43,7 +43,7 @@ The pytest suite uses good and bad fixture vaults and covers every validator. At
 - A missing source citation fails with a clear message.
 - A modified raw file fails hash validation with a clear message.
 - Redaction removes seeded fake secrets, including AWS-style keys, tokens, and private-key headers.
-- A prompt-injection fixture is added during the review-loop phase.
+- Prompt-injection fixtures in `tests/fixtures/injection/` (Phase 6): hostile raw notes and scanner JSON with canary strings. Canaries must not reach `wiki/`, the review or capture state, the manifest, or the wiki log. Fixtures never go in the real `vault/raw/`.
 
 The suite runs in CI.
 
@@ -53,7 +53,7 @@ The planned Obsidian skill pack includes CLI, Markdown, Bases, Canvas, and Defud
 
 ## Current technical state
 
-Phases 1 through 5 are complete. The repository uses Python 3.11+, a
+Phases 1 through 5 are complete, and Phase 6 (the review loop) is implemented. The repository uses Python 3.11+, a
 standard-library `venv` managed with `pip`, PyYAML as the runtime dependency,
 pytest for tests, and Ruff for linting/formatting. The initial `wiki_tool`
 command surface is implemented as filesystem-only operations. The vault
